@@ -2173,9 +2173,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2116649826}
+  - component: {fileID: 2116649827}
   - component: {fileID: 2116649828}
   - component: {fileID: 2116649829}
-  - component: {fileID: 2116649827}
+  - component: {fileID: 2116649830}
   m_Layer: 6
   m_Name: Stickman
   m_TagString: Untagged
@@ -2225,6 +2226,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67de9f508ad345e6a3161af3f0369fd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _stickmanAnimation: {fileID: 2116649829}
+  _outline: {fileID: 2116649830}
 --- !u!114 &2116649829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2238,6 +2241,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 810620884}
+--- !u!114 &2116649830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116649825}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 0, g: 1, b: 0.11024022, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 1
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &2133947501
 GameObject:
   m_ObjectHideFlags: 0
