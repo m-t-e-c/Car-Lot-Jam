@@ -7,6 +7,9 @@ namespace CLJ
     public class LevelGridEditor : Editor
     {
         private LevelGrid _levelGrid;
+        private int _levelIndex;
+        private int _selectedGridObjectIndex;
+        private int _selectedDirectionIndex;
 
         private void OnEnable()
         {
@@ -18,35 +21,87 @@ namespace CLJ
             base.OnInspectorGUI();
             serializedObject.Update();
 
-            EditorGUILayout.LabelField("Grid Properties", EditorStyles.boldLabel);
+            if (ReferenceEquals(_levelGrid.gridObjectsGroup, null))
+            {
+                EditorGUILayout.HelpBox("Please assign a Grid Objects Group to Level Grid", MessageType.Warning);
+                return;
+            }
+            
             DrawGridProperties();
+            
+            if (_levelGrid.grid.Length != (_levelGrid.gridWidth * _levelGrid.gridHeight))
+            {
+                EditorGUILayout.HelpBox("Please regenerate the Grid!", MessageType.Error);
+                return;
+            }
+
+            if (_levelGrid.grid.Length.Equals(0))
+            {
+                return;
+            }
 
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Grid Object List", EditorStyles.boldLabel);
+
             DrawGridObjectListButtons();
 
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Grid", EditorStyles.boldLabel);
-            DrawGrid();
-            
+            DrawDirectionButtons();
+
             EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Save/Load", EditorStyles.boldLabel);
-            EditorGUILayout.BeginHorizontal();
-            if (GUILayout.Button("Save"))
-            {
-                _levelGrid.SaveGrid();
-            }
-            if (GUILayout.Button("Load"))
-            {
-                _levelGrid.LoadGrid();
-            }
-            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.LabelField("Grid", EditorStyles.boldLabel);
+
+            DrawGrid();
+
+            EditorGUILayout.Space();
+            DrawSaveLoadButtons();
 
             serializedObject.ApplyModifiedProperties();
         }
 
+        void DrawDirectionButtons()
+        {
+            if (ReferenceEquals(_levelGrid.gridObjectsGroup, null))
+            {
+                return;
+            }
+
+            EditorGUILayout.LabelField("Select Object Direction:", EditorStyles.boldLabel);
+            EditorGUILayout.BeginHorizontal();
+
+            for (var i = 0; i < 4; i++)
+            {
+                if (_selectedDirectionIndex == i)
+                {
+                    GUI.backgroundColor = Color.gray;
+                }
+                else
+                {
+                    GUI.backgroundColor = Color.white;
+                }
+
+                if (GUILayout.Button(((GridObjectDirection)i).ToString()))
+                {
+                    _levelGrid.SetObjectDirection((GridObjectDirection)i);
+                    _selectedDirectionIndex = i;
+                }
+            }
+
+            EditorGUILayout.EndHorizontal();
+        }
+
         void DrawGridProperties()
         {
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Grid Width");
+            _levelGrid.gridWidth = EditorGUILayout.IntField(_levelGrid.gridWidth);
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Grid Height");
+            _levelGrid.gridHeight = EditorGUILayout.IntField(_levelGrid.gridHeight);
+            EditorGUILayout.EndHorizontal();
+
+
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Generate Grid"))
             {
@@ -63,52 +118,78 @@ namespace CLJ
 
         void DrawGridObjectListButtons()
         {
-            EditorGUILayout.BeginVertical();
+            if (ReferenceEquals(_levelGrid.gridObjectsGroup, null))
+                return;
 
-            if (GUILayout.Button("None"))
+            EditorGUILayout.LabelField("Select Object To Place:", EditorStyles.boldLabel);
+            EditorGUILayout.BeginHorizontal();
+
+            for (var i = -1; i < _levelGrid.gridObjectsGroup.GridObjects.Count; i++)
             {
-                _levelGrid.SetObjectToPlace(null);   
-            }
-            
-            foreach (GridObject gridObject in _levelGrid.gridObjectList)
-            {
+                if (i == -1)
+                {
+                    if (_selectedGridObjectIndex == -1)
+                    {
+                        GUI.backgroundColor = Color.gray;
+                    }
+
+                    if (GUILayout.Button("None"))
+                    {
+                        _levelGrid.SetObjectToPlace(null);
+                        _selectedGridObjectIndex = -1;
+                    }
+
+                    continue;
+                }
+
+                var gridObject = _levelGrid.gridObjectsGroup.GridObjects[i];
+
+                if (_selectedGridObjectIndex == i)
+                {
+                    GUI.backgroundColor = Color.black + GetColorByColorType(gridObject.gridObjectColor);
+                }
+                else
+                {
+                    GUI.backgroundColor = Color.white + GetColorByColorType(gridObject.gridObjectColor);
+                }
+
                 if (GUILayout.Button(gridObject.gridObjectType.ToString()))
                 {
-                    _levelGrid.SetObjectToPlace(gridObject);   
+                    _levelGrid.SetObjectToPlace(gridObject);
+                    _selectedGridObjectIndex = i;
                 }
             }
-            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.EndHorizontal();
         }
 
         void DrawGrid()
         {
-            if (_levelGrid.grid == null || _levelGrid.grid.Length == 0)
+            if (_levelGrid.grid == null || _levelGrid.grid.Length == 0 ||
+                _levelGrid.grid.Length != _levelGrid.gridWidth * _levelGrid.gridHeight)
                 return;
 
             for (int y = 0; y < _levelGrid.gridHeight; y++)
             {
                 EditorGUILayout.BeginHorizontal();
-
                 GUILayout.FlexibleSpace();
 
                 for (int x = 0; x < _levelGrid.gridWidth; x++)
                 {
-                    GUIStyle style = new GUIStyle(GUI.skin.button);
                     var cellText = "";
-
                     var cell = _levelGrid.grid[y * _levelGrid.gridWidth + x];
-                    
+
                     if (cell == null || cell.gridObject == null)
                     {
-                        style.normal.textColor = Color.white;
+                        GUI.backgroundColor = Color.gray;
                     }
                     else
                     {
-                        style.normal.textColor = cell.gridObject.color;
-                        cellText = $"R{cell}";
+                        GUI.backgroundColor = GetColorByColorType(cell.gridObject.gridObjectColor);
+                        cellText = $"{cell.gridObject.gridObjectType} {cell.objectDirection}";
                     }
 
-                    if (GUILayout.Button(cellText, style, GUILayout.Width(40), GUILayout.Height(40)))
+                    if (GUILayout.Button(cellText, GUILayout.Width(60), GUILayout.Height(60)))
                     {
                         _levelGrid.GridButtonAction(x, y);
                     }
@@ -116,6 +197,53 @@ namespace CLJ
 
                 GUILayout.FlexibleSpace();
                 EditorGUILayout.EndHorizontal();
+            }
+        }
+
+        void DrawSaveLoadButtons()
+        {
+            EditorGUILayout.LabelField("Save/Load", EditorStyles.boldLabel);
+
+            GUI.backgroundColor = Color.white;
+
+            EditorGUILayout.BeginHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Level Index");
+            _levelIndex = EditorGUILayout.IntField(_levelIndex);
+            EditorGUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Save"))
+            {
+                _levelGrid.SaveGrid(_levelIndex);
+            }
+
+            if (GUILayout.Button("Load"))
+            {
+                _levelGrid.LoadGrid(_levelIndex);
+            }
+
+            EditorGUILayout.EndHorizontal();
+        }
+
+        Color32 GetColorByColorType(GridObjectColor color)
+        {
+            switch (color)
+            {
+                case GridObjectColor.Red:
+                    return Color.red;
+                case GridObjectColor.Green:
+                    return Color.green;
+                case GridObjectColor.Blue:
+                    return Color.blue;
+                case GridObjectColor.Yellow:
+                    return Color.yellow;
+                case GridObjectColor.Purple:
+                    return new Color32(128, 0, 128, 255);
+                case GridObjectColor.Orange:
+                    return new Color32(255, 165, 0, 255);
+                default:
+                    return Color.white;
             }
         }
     }

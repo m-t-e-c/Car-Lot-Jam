@@ -2,34 +2,46 @@
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using CLJ.ScriptableObjects;
 using Newtonsoft.Json;
 
 namespace CLJ
 {
-    public enum GridDirection
+    public enum GridObjectDirection
     {
         Left,
         Right,
         Up,
         Down
     }
-    
+
+    public enum GridObjectColor
+    {
+        Red,
+        Green,
+        Yellow,
+        Blue,
+        Purple,
+        Orange,
+    }
+
     public enum GridObjectType
     {
         None,
         SmallCar,
         LongCar,
         Stickman,
-        Obstacle
+        Obstacle,
+        StraightRoad,
+        CurvedRoad,
     }
 
     [Serializable]
     public class GridObject
     {
         public GridObjectType gridObjectType;
-        public Color32 color = Color.white;
+        public GridObjectColor gridObjectColor;
         public int gridSpace;
-        [HideInInspector] public GridDirection direction;
     }
 
     [Serializable]
@@ -37,6 +49,8 @@ namespace CLJ
     {
         [NonSerialized] public GridObject gridObject;
         [NonSerialized] public List<Vector2Int> linkedCellCoordinates;
+        public GridObjectDirection objectDirection;
+        public bool isSpawned;
 
         public GridCell()
         {
@@ -59,34 +73,31 @@ namespace CLJ
     {
         public GridObject gridObject;
         public List<Vector2Int> linkedCellCoordinates;
+        public GridObjectDirection objectDirection;
 
-        public SerializedGridCell(GridObject gridObject, List<Vector2Int> linkedCellCoordinates)
+        public SerializedGridCell(GridObject gridObject, List<Vector2Int> linkedCellCoordinates,
+            GridObjectDirection objectDirection)
         {
             this.gridObject = gridObject;
             this.linkedCellCoordinates = linkedCellCoordinates;
+            this.objectDirection = objectDirection;
         }
-    }
-    
-    public class SerializedGrid
-    {
-        public List<SerializedGridCell> serializedGridCells;
     }
 
     public class LevelGrid : MonoBehaviour
     {
-        public int gridWidth;
-        public int gridHeight;
-        public List<GridObject> gridObjectList = new List<GridObject>();
-        public GridCell[] grid;
-        private GridObject objectToPlace;
-        public GridDirection objectDirection;
-        public int levelIndex;
+        [HideInInspector] public int gridWidth;
+        [HideInInspector] public int gridHeight;
+        [HideInInspector] public GridObjectDirection objectObjectDirection;
+        [HideInInspector] public GridCell[] grid;
+        public GridObjectsGroup gridObjectsGroup;
+        private GridObject _objectToPlace;
 
         public void GenerateGrid()
         {
             grid = new GridCell[gridWidth * gridHeight];
         }
-        
+
         public GridCell[] GetGrid()
         {
             return grid;
@@ -95,13 +106,13 @@ namespace CLJ
         public void ResetGrid()
         {
             grid = new GridCell[gridWidth * gridHeight];
-            objectToPlace = null;
+            _objectToPlace = null;
         }
 
         public void GridButtonAction(int x, int y)
         {
             var cell = grid[y * gridWidth + x];
-            if (objectToPlace == null)
+            if (_objectToPlace == null)
             {
                 if (cell.gridObject == null)
                     return;
@@ -128,30 +139,35 @@ namespace CLJ
 
         public void SetObjectToPlace(GridObject gridObject)
         {
-            objectToPlace = gridObject;
+            _objectToPlace = gridObject;
+        }
+
+        public void SetObjectDirection(GridObjectDirection gridObjectDirection)
+        {
+            objectObjectDirection = gridObjectDirection;
         }
 
         public void PlaceSelectedObjectToGrid(int x, int y)
         {
-            var gridSpace = objectToPlace.gridSpace;
+            var gridSpace = _objectToPlace.gridSpace;
 
             if (!IsSpaceAvailable(x, y, gridSpace))
             {
                 return;
             }
 
-            switch (objectDirection)
+            switch (objectObjectDirection)
             {
-                case GridDirection.Left:
+                case GridObjectDirection.Left:
                     PlaceInDirection(x, y, -1, 0, gridSpace);
                     break;
-                case GridDirection.Right:
+                case GridObjectDirection.Right:
                     PlaceInDirection(x, y, 1, 0, gridSpace);
                     break;
-                case GridDirection.Down:
+                case GridObjectDirection.Down:
                     PlaceInDirection(x, y, 0, 1, gridSpace);
                     break;
-                case GridDirection.Up:
+                case GridObjectDirection.Up:
                     PlaceInDirection(x, y, 0, -1, gridSpace);
                     break;
             }
@@ -164,7 +180,9 @@ namespace CLJ
                 int newY = y + i * GetDeltaY();
 
                 linkedCellCoordinates.Add(new Vector2Int(newX, newY));
-                grid[newY * gridWidth + newX].SetCell(objectToPlace);
+                var cell = grid[newY * gridWidth + newX];
+                cell.SetCell(_objectToPlace);
+                cell.objectDirection = objectObjectDirection;
             }
 
             foreach (var coord in linkedCellCoordinates)
@@ -176,11 +194,11 @@ namespace CLJ
 
         int GetDeltaX()
         {
-            switch (objectDirection)
+            switch (objectObjectDirection)
             {
-                case GridDirection.Left:
+                case GridObjectDirection.Left:
                     return -1;
-                case GridDirection.Right:
+                case GridObjectDirection.Right:
                     return 1;
                 default:
                     return 0;
@@ -189,11 +207,11 @@ namespace CLJ
 
         int GetDeltaY()
         {
-            switch (objectDirection)
+            switch (objectObjectDirection)
             {
-                case GridDirection.Down:
+                case GridObjectDirection.Down:
                     return 1;
-                case GridDirection.Up:
+                case GridObjectDirection.Up:
                     return -1;
                 default:
                     return 0;
@@ -206,18 +224,18 @@ namespace CLJ
             {
                 int newX = x, newY = y;
 
-                switch (objectDirection)
+                switch (objectObjectDirection)
                 {
-                    case GridDirection.Left:
+                    case GridObjectDirection.Left:
                         newX -= i;
                         break;
-                    case GridDirection.Right:
+                    case GridObjectDirection.Right:
                         newX += i;
                         break;
-                    case GridDirection.Down:
+                    case GridObjectDirection.Down:
                         newY += i;
                         break;
-                    case GridDirection.Up:
+                    case GridObjectDirection.Up:
                         newY -= i;
                         break;
                 }
@@ -250,18 +268,21 @@ namespace CLJ
 
                 if (newX >= 0 && newX < gridWidth && newY >= 0 && newY < gridHeight)
                 {
-                    grid[newY * gridWidth + newX].SetCell(objectToPlace);
+                    var cell = grid[newY * gridWidth + newX];
+                    cell.SetCell(_objectToPlace);
+                    cell.objectDirection = objectObjectDirection;
                 }
             }
         }
 
-        public void SaveGrid()
+        public void SaveGrid(int levelIndex)
         {
             List<SerializedGridCell> serializedGridCells = new List<SerializedGridCell>();
 
             foreach (GridCell gridCell in grid)
             {
-                serializedGridCells.Add(new SerializedGridCell(gridCell.gridObject, gridCell.linkedCellCoordinates));
+                serializedGridCells.Add(new SerializedGridCell(gridCell.gridObject, gridCell.linkedCellCoordinates,
+                    gridCell.objectDirection));
             }
 
             string json = JsonConvert.SerializeObject(serializedGridCells);
@@ -269,10 +290,12 @@ namespace CLJ
         }
 
 
-        public void LoadGrid()
+        public void LoadGrid(int levelIndex)
         {
-            string json = System.IO.File.ReadAllText(Application.dataPath + $"/CLJ/LevelData/LevelGrid{levelIndex}.json");
-            List<SerializedGridCell> serializedGridCells = JsonConvert.DeserializeObject<List<SerializedGridCell>>(json);
+            string json =
+                System.IO.File.ReadAllText(Application.dataPath + $"/CLJ/LevelData/LevelGrid{levelIndex}.json");
+            List<SerializedGridCell> serializedGridCells =
+                JsonConvert.DeserializeObject<List<SerializedGridCell>>(json);
 
             List<GridCell> cells = new List<GridCell>();
             foreach (SerializedGridCell serializedGridCell in serializedGridCells)
@@ -280,11 +303,11 @@ namespace CLJ
                 GridCell cell = new GridCell();
                 cell.gridObject = serializedGridCell.gridObject;
                 cell.linkedCellCoordinates = serializedGridCell.linkedCellCoordinates;
+                cell.objectDirection = serializedGridCell.objectDirection;
                 cells.Add(cell);
             }
 
             grid = cells.ToArray();
         }
-
     }
 }
