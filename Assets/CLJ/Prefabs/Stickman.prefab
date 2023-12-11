@@ -46,10 +46,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1.6926425
+  m_Radius: 0.20661378
+  m_Height: 1.0410591
   m_Direction: 1
-  m_Center: {x: 0, y: 0.8224076, z: 0}
+  m_Center: {x: 0, y: 0.49661595, z: 0}
 --- !u!114 &6454102269892881677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,8 +62,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67de9f508ad345e6a3161af3f0369fd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stickmanAnimation: {fileID: 6454102269892881676}
-  _outline: {fileID: 6454102269892881679}
+  moveSpeed: 5
 --- !u!114 &6454102269892881676
 MonoBehaviour:
   m_ObjectHideFlags: 0

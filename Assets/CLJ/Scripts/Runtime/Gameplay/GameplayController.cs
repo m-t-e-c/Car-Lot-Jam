@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CLJ.Scripts
 {
@@ -8,6 +7,8 @@ namespace CLJ.Scripts
         [SerializeField] private LayerMask _interactionLayers;
 
         private Camera _camera;
+
+        private Stickman _stickman;
 
         private void Start()
         {
@@ -18,14 +19,19 @@ namespace CLJ.Scripts
         {
             if (!Input.GetMouseButtonDown(0))
                 return;
-            
+
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
             Physics.Raycast(ray.origin, ray.direction, out RaycastHit hitInfo, Mathf.Infinity, _interactionLayers);
             if (hitInfo.collider != null)
             {
                 if (hitInfo.collider.TryGetComponent(out Stickman stickman))
                 {
-                    stickman.SetSelected();
+                    _stickman = stickman;
+                }
+
+                if (hitInfo.collider.TryGetComponent(out Ground ground))
+                {
+                    _stickman.MoveTo(ground.GetCoordinates());
                 }
             }
         }

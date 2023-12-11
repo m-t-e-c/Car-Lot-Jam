@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using CLJ.Scripts.Runtime.Level;
 using UnityEditor;
+using UnityEngine;
 
-namespace CLJ
+namespace CLJ.Scripts.Editor
 {
     [CustomEditor(typeof(LevelGrid))]
-    public class LevelGridEditor : Editor
+    public class LevelGridEditor : UnityEditor.Editor
     {
         private LevelGrid _levelGrid;
         private int _levelIndex;
@@ -29,7 +30,7 @@ namespace CLJ
             
             DrawGridProperties();
             
-            if (_levelGrid.grid.Length != (_levelGrid.gridWidth * _levelGrid.gridHeight))
+            if (_levelGrid.grid == null || _levelGrid.grid.Length != (_levelGrid.gridWidth * _levelGrid.gridHeight))
             {
                 EditorGUILayout.HelpBox("Please regenerate the Grid!", MessageType.Error);
                 return;
@@ -39,20 +40,9 @@ namespace CLJ
             {
                 return;
             }
-
-            EditorGUILayout.Space();
-
             DrawGridObjectListButtons();
-
-            EditorGUILayout.Space();
             DrawDirectionButtons();
-
-            EditorGUILayout.Space();
-            EditorGUILayout.LabelField("Grid", EditorStyles.boldLabel);
-
             DrawGrid();
-
-            EditorGUILayout.Space();
             DrawSaveLoadButtons();
 
             serializedObject.ApplyModifiedProperties();
@@ -64,7 +54,8 @@ namespace CLJ
             {
                 return;
             }
-
+            
+            EditorGUILayout.Space();
             EditorGUILayout.LabelField("Select Object Direction:", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
 
@@ -121,6 +112,7 @@ namespace CLJ
             if (ReferenceEquals(_levelGrid.gridObjectsGroup, null))
                 return;
 
+            EditorGUILayout.Space();
             EditorGUILayout.LabelField("Select Object To Place:", EditorStyles.boldLabel);
             EditorGUILayout.BeginHorizontal();
 
@@ -165,9 +157,11 @@ namespace CLJ
 
         void DrawGrid()
         {
-            if (_levelGrid.grid == null || _levelGrid.grid.Length == 0 ||
-                _levelGrid.grid.Length != _levelGrid.gridWidth * _levelGrid.gridHeight)
+            if (_levelGrid.grid == null || _levelGrid.grid.Length == 0)
                 return;
+            
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Grid", EditorStyles.boldLabel);
 
             for (int y = 0; y < _levelGrid.gridHeight; y++)
             {
@@ -176,8 +170,8 @@ namespace CLJ
 
                 for (int x = 0; x < _levelGrid.gridWidth; x++)
                 {
-                    var cellText = "";
-                    var cell = _levelGrid.grid[y * _levelGrid.gridWidth + x];
+                    var cellText = x + "x" + y;
+                    var cell = _levelGrid.GetCell(x,y);
 
                     if (cell == null || cell.gridObject == null)
                     {
@@ -202,6 +196,8 @@ namespace CLJ
 
         void DrawSaveLoadButtons()
         {
+            EditorGUILayout.Space();
+            EditorGUILayout.HelpBox("Don't forget the save grid!", MessageType.Warning);
             EditorGUILayout.LabelField("Save/Load", EditorStyles.boldLabel);
 
             GUI.backgroundColor = Color.white;

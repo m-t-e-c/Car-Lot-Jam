@@ -154,85 +154,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridWidth: 5
   gridHeight: 5
-  gridObjectList:
-  - gridObjectType: 1
-    color:
-      serializedVersion: 2
-      rgba: 4278190335
-    gridSpace: 2
-  - gridObjectType: 2
-    color:
-      serializedVersion: 2
-      rgba: 4278234367
-    gridSpace: 3
-  - gridObjectType: 3
-    color:
-      serializedVersion: 2
-      rgba: 4278255593
-    gridSpace: 1
-  - gridObjectType: 5
-    color:
-      serializedVersion: 2
-      rgba: 4278255432
-    gridSpace: 1
-  - gridObjectType: 6
-    color:
-      serializedVersion: 2
-      rgba: 4287102720
-    gridSpace: 1
-  grid:
-  - direction: 1
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 1
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 1
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  - direction: 0
-    IsSpawned: 0
-  objectDirection: 1
-  levelIndex: 1
+  objectObjectDirection: 2
+  gridObjectsGroup: {fileID: 11400000, guid: f004648adf224c44d9a0b4daed234fde, type: 2}
 --- !u!4 &140484642
 Transform:
   m_ObjectHideFlags: 0
@@ -246,7 +169,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &187803025
 GameObject:
@@ -259,7 +182,6 @@ GameObject:
   - component: {fileID: 187803029}
   - component: {fileID: 187803028}
   - component: {fileID: 187803027}
-  - component: {fileID: 187803026}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -267,20 +189,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &187803026
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 187803025}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &187803027
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -377,7 +285,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interactionLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 4294967295
 --- !u!4 &443180962
 Transform:
   m_ObjectHideFlags: 0
@@ -538,7 +446,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _levelGrid: {fileID: 140484641}
-  gridSpace: 1.75
+  gridSpace: 2
 --- !u!4 &1721443312
 Transform:
   m_ObjectHideFlags: 0
@@ -552,7 +460,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2133947501
 GameObject:
