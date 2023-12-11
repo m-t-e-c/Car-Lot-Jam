@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridWidth: 5
   gridHeight: 5
-  objectObjectDirection: 2
+  objectObjectDirection: 3
   gridObjectsGroup: {fileID: 11400000, guid: f004648adf224c44d9a0b4daed234fde, type: 2}
 --- !u!4 &140484642
 Transform:
@@ -446,7 +446,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _levelGrid: {fileID: 140484641}
-  gridSpace: 2
 --- !u!4 &1721443312
 Transform:
   m_ObjectHideFlags: 0
@@ -540,7 +539,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2133947501}
   m_LocalRotation: {x: 0.45667672, y: -0.13110848, z: 0.06825075, w: 0.87726784}
-  m_LocalPosition: {x: 5, y: 14, z: -11}
+  m_LocalPosition: {x: 4.5, y: 15, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

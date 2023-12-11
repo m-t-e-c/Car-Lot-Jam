@@ -20,6 +20,7 @@ namespace CLJ.Runtime
             _pathfinder = new Pathfinder(_levelGrid);
             await SpawnGrid();
             SpawnObjects();
+            SpawnRoad();
         }
 
         async UniTask SpawnGrid()
@@ -33,6 +34,57 @@ namespace CLJ.Runtime
                     obj.GetComponent<Ground>().SetCoordinates(x,y);
                     _spawnedCells.Add(new Vector2Int(x, y), obj);
                 }
+            }
+        }
+
+        async void SpawnRoad()
+        {
+            var road = await GetObjectFromAddressable("StraightRoad");
+
+            // Up and Down Roads
+            for (int i = 0; i < _levelGrid.gridWidth; i++)
+            {
+                Vector3 topPosition = new Vector3(i, 0, _levelGrid.gridHeight);
+                Vector3 bottomPosition = new Vector3(i, 0, -1);
+                Quaternion rotation = Quaternion.Euler(0, 90, 0);
+                Instantiate(road, topPosition, rotation);
+                Instantiate(road, bottomPosition, rotation);
+            }
+            
+            // Left and Right Roads
+            for (int i = 0; i < _levelGrid.gridHeight; i++)
+            {
+                Vector3 topPosition = new Vector3(_levelGrid.gridWidth, 0, i);
+                Vector3 bottomPosition = new Vector3(-1, 0, i);
+                Instantiate(road, topPosition, Quaternion.identity);
+                Instantiate(road, bottomPosition, Quaternion.identity);
+            }
+
+            // Corners
+            Vector3 topRightPosition = new Vector3(_levelGrid.gridWidth, 0, _levelGrid.gridHeight);
+            Vector3 bottomLeftPosition = new Vector3(-1, 0, -1);
+            Vector3 bottomRightPosition = new Vector3(_levelGrid.gridWidth, 0, -1);
+            
+            var corner = await GetObjectFromAddressable("CornerRoad");
+           
+            Instantiate(corner, topRightPosition, Quaternion.Euler(0, 90, 0));
+            Instantiate(corner, bottomLeftPosition, Quaternion.Euler(0,270,0));
+            Instantiate(corner, bottomRightPosition, Quaternion.Euler(0, 180, 0));
+            
+            var tRoad = await GetObjectFromAddressable("TRoad");
+            Vector3 topLeftPosition = new Vector3(-1, 0, _levelGrid.gridHeight);
+            Instantiate(tRoad, topLeftPosition, Quaternion.Euler(0, 0, 0));
+
+            var exitGate = await GetObjectFromAddressable("ExitGate");
+            
+            for (int i = 1; i < 30; i++)
+            {
+                if (i == 4)
+                {
+                    Instantiate(exitGate, topLeftPosition + i * Vector3.forward + Vector3.left, Quaternion.identity);
+                }
+                
+                Instantiate(road, topLeftPosition + i * Vector3.forward, Quaternion.Euler(0, 0, 0));
             }
         }
 
