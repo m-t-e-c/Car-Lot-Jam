@@ -96,7 +96,7 @@ namespace CLJ.Scripts.Runtime.Level
 
         public void GenerateGrid()
         {
-            grid = new GridCell[gridHeight, gridWidth];
+            grid = new GridCell[gridWidth, gridHeight];
         }
         public GridCell GetCell(int x, int y)
         {
@@ -110,7 +110,7 @@ namespace CLJ.Scripts.Runtime.Level
 
         public void ResetGrid()
         {
-            grid = new GridCell[gridHeight, gridWidth];
+            grid = new GridCell[gridWidth, gridHeight];
             _objectToPlace = null;
         }
 
@@ -299,9 +299,9 @@ namespace CLJ.Scripts.Runtime.Level
             string json = System.IO.File.ReadAllText(Application.dataPath + $"/CLJ/LevelData/LevelGrid{levelIndex}.json");
             List<SerializedGridCell> serializedGridCells = JsonConvert.DeserializeObject<List<SerializedGridCell>>(json);
 
-            grid = new GridCell[gridHeight, gridWidth];
+            grid = new GridCell[gridWidth, gridHeight];
 
-            int totalCells = gridHeight * gridWidth;
+            int totalCells = gridWidth * gridHeight;
             for (int i = 0; i < serializedGridCells.Count && i < totalCells; i++)
             {
                 SerializedGridCell serializedGridCell = serializedGridCells[i];
