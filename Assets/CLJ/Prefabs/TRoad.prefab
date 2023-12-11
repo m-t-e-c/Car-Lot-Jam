@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9025379353914486648}
   m_Layer: 0
-  m_Name: CurvedRoad
+  m_Name: TRoad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -49,7 +49,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 49024ea0bbc493d428400abe0b235617, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 49024ea0bbc493d428400abe0b235617, type: 3}
       propertyPath: m_LocalScale.z
