@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using CLJ.Scripts.Runtime.AStar;
+using CLJ.Runtime.AStar;
 using UnityEngine;
 
-namespace CLJ.Scripts
+namespace CLJ.Runtime
 {
     public class Stickman : MonoBehaviour
     {
@@ -13,14 +13,11 @@ namespace CLJ.Scripts
 
         private Vector2Int _gridPosition;
 
-        public void SetPathfinder(Pathfinder pathfinder)
+        public void Init(Pathfinder pathfinder, Vector2Int position)
         {
             _pathfinder = pathfinder;
-        }
-
-        public void SetGridPosition(Vector2Int position)
-        {
             _gridPosition = position;
+
         }
 
         public void MoveTo(Vector2Int targetPosition)
@@ -47,6 +44,7 @@ namespace CLJ.Scripts
 
                 while (transform.position != endPosition)
                 {
+                    _isMoving = true;
                     float distCovered = (Time.time - startTime) * moveSpeed;
                     float fractionOfJourney = distCovered / journeyLength;
                     transform.position = Vector3.Lerp(startPosition, endPosition, fractionOfJourney);

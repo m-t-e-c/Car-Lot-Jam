@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using CLJ.Scripts.Runtime.Level;
+using CLJ.Runtime.Level;
 using UnityEngine;
 
-namespace CLJ.Scripts.Runtime.AStar
+namespace CLJ.Runtime.AStar
 {
     public class Pathfinder
     {
@@ -10,11 +10,11 @@ namespace CLJ.Scripts.Runtime.AStar
 
         public Pathfinder(LevelGrid levelGrid)
         {
-            for (int y = 0; y < levelGrid.gridHeight; y++)
+            for (int y = 0; y < levelGrid.Height; y++)
             {
-                for (int x = 0; x < levelGrid.gridWidth; x++)
+                for (int x = 0; x < levelGrid.Width; x++)
                 {
-                    var cell = levelGrid.grid[x, y];
+                    var cell = levelGrid.Cells[x, y];
                     _nodes.Add(new Vector2Int(x,y), new Node(new Vector2Int(x, y), cell.gridObject == null));
                 }
             }

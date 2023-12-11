@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CLJ.Scripts
+namespace CLJ.Runtime
 {
     public class GameplayController : MonoBehaviour
     {

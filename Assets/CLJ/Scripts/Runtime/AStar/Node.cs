@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace CLJ.Scripts.Runtime.AStar
+namespace CLJ.Runtime.AStar
 {
     public class Node
     {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CLJ.Scripts.Runtime.Level;
+using CLJ.Runtime.Level;
 using UnityEngine;
 
 namespace CLJ.ScriptableObjects
