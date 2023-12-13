@@ -13,15 +13,81 @@ MonoBehaviour:
   m_Name: Grid Objects Group
   m_EditorClassIdentifier: 
   <GridObjects>k__BackingField:
-  - gridObjectType: 3
-    gridObjectColor: 1
-    gridSpace: 1
   - gridObjectType: 1
     gridObjectColor: 1
+    gridSpace: 2
+  - gridObjectType: 1
+    gridObjectColor: 2
+    gridSpace: 2
+  - gridObjectType: 1
+    gridObjectColor: 3
+    gridSpace: 2
+  - gridObjectType: 1
+    gridObjectColor: 4
+    gridSpace: 2
+  - gridObjectType: 1
+    gridObjectColor: 5
+    gridSpace: 2
+  - gridObjectType: 1
+    gridObjectColor: 6
+    gridSpace: 2
+  - gridObjectType: 1
+    gridObjectColor: 7
+    gridSpace: 2
+  - gridObjectType: 1
+    gridObjectColor: 8
     gridSpace: 2
   - gridObjectType: 2
     gridObjectColor: 1
     gridSpace: 3
+  - gridObjectType: 2
+    gridObjectColor: 2
+    gridSpace: 3
+  - gridObjectType: 2
+    gridObjectColor: 3
+    gridSpace: 3
+  - gridObjectType: 2
+    gridObjectColor: 4
+    gridSpace: 3
+  - gridObjectType: 2
+    gridObjectColor: 5
+    gridSpace: 3
+  - gridObjectType: 2
+    gridObjectColor: 6
+    gridSpace: 3
+  - gridObjectType: 2
+    gridObjectColor: 7
+    gridSpace: 3
+  - gridObjectType: 2
+    gridObjectColor: 8
+    gridSpace: 3
   - gridObjectType: 3
+    gridObjectColor: 1
+    gridSpace: 1
+  - gridObjectType: 3
+    gridObjectColor: 2
+    gridSpace: 1
+  - gridObjectType: 3
+    gridObjectColor: 3
+    gridSpace: 1
+  - gridObjectType: 3
+    gridObjectColor: 4
+    gridSpace: 1
+  - gridObjectType: 3
+    gridObjectColor: 5
+    gridSpace: 1
+  - gridObjectType: 3
+    gridObjectColor: 6
+    gridSpace: 1
+  - gridObjectType: 3
+    gridObjectColor: 7
+    gridSpace: 1
+  - gridObjectType: 3
+    gridObjectColor: 8
+    gridSpace: 1
+  - gridObjectType: 4
     gridObjectColor: 0
     gridSpace: 1
+  - gridObjectType: 5
+    gridObjectColor: 0
+    gridSpace: 2
