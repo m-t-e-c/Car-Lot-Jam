@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace CLJ.Runtime.Level
 {
-   
     [Serializable]
     public class GridCell
     {
-        [NonSerialized] public GridObject gridObject;
-        [NonSerialized] public List<Vector2Int> linkedCellCoordinates;
-        public GridObjectDirection objectDirection;
+        public GridObject gridObject;
+        public List<Vector2Int> linkedCellCoordinates;
+        public CellDirection cellDirection;
+        public CellColor cellColor;
         public bool isSpawned;
 
         public GridCell()
@@ -19,8 +19,11 @@ namespace CLJ.Runtime.Level
             linkedCellCoordinates = null;
         }
 
-        public void SetCell(GridObject obj)
+        public void SetCell(GridObject obj, CellDirection direction, CellColor color)
         {
+            gridObject = obj;
+            cellDirection = direction;
+            cellColor = color;
             gridObject = obj;
         }
 

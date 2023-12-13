@@ -1,10 +1,13 @@
-﻿namespace CLJ.Runtime.Level
+﻿using System;
+
+namespace CLJ.Runtime.Level
 {
+    [Serializable]
     public class LevelGrid
     {
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-        public GridCell[,] Cells { get; }
+        public int Width;
+        public int Height;
+        public GridCell[,] Cells;
 
         public LevelGrid(int width, int height)
         {
