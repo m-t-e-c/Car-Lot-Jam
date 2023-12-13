@@ -7,37 +7,44 @@ using UnityEngine;
 
 namespace CLJ.Runtime
 {
-    public class Stickman : MonoBehaviour
+    public class Car : MonoBehaviour
     {
-        [SerializeField] private StickmanAnimation _stickmanAnimation;
-        [SerializeField] private GridObjectColorSetter gridObjectColorSetter;
+        [SerializeField] private GridObjectColorSetter _gridObjectColorSetter;
         [SerializeField] private Outline _outline;
-        [SerializeField] private float _moveSpeed = 5f;
 
         private Pathfinder _pathfinder;
-        private Vector2Int _gridPosition;
-
         private CellColor _cellColor;
-        public bool isMoving;
+        private List<Vector2Int> _cellsAround;
+        
+        private Vector2Int _gridPosition;
+        private Vector2Int _lastRoadPosition;
 
-        public void Init(Pathfinder pathfinder, Vector2Int position, CellColor color)
+        public void Init(CellColor color, List<Vector2Int> cellsAround, Pathfinder pathfinder, Vector2Int gridPosition, Vector2Int lastRoadPosition)
         {
+            _lastRoadPosition = new Vector2Int(-1, -1);
+            _gridPosition = new Vector2Int(2,-1);
             _pathfinder = pathfinder;
-            _gridPosition = position;
-
+            _cellsAround = cellsAround;
             _cellColor = color;
-            gridObjectColorSetter.SetColor(_cellColor);
-        }
-
-        public void SetSelected()
-        {
-            _stickmanAnimation.PlaySelectedAnimation();
-            _outline.enabled = _outline.enabled == false;
+            _gridObjectColorSetter.SetColor(_cellColor);
         }
         
-        public void CancelSelection()
+        public List<Vector2Int> GetAroundCell()
         {
-            _outline.enabled = false;
+            return _cellsAround;
+        }
+
+        public void Highlight()
+        {
+            _outline.enabled = true;
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                MoveTo(_lastRoadPosition);
+            }
         }
 
         public bool MoveTo(Vector2Int targetPosition, Action onMoveComplete = null)
@@ -56,9 +63,6 @@ namespace CLJ.Runtime
         
         private IEnumerator FollowPath(List<Vector2Int> path, Action onMoveComplete = null)
         {
-            isMoving = true;
-            _stickmanAnimation.ChangeMovingState(true);
-
             foreach (var point in path)
             {
                 Vector3 startPosition = transform.position;
@@ -68,7 +72,7 @@ namespace CLJ.Runtime
 
                 while (transform.position != endPosition)
                 {
-                    float distCovered = (Time.time - startTime) * _moveSpeed;
+                    float distCovered = (Time.time - startTime) * 5;
                     float fractionOfJourney = distCovered / journeyLength;
                     transform.rotation = Quaternion.Lerp(transform.rotation,
                         Quaternion.LookRotation(endPosition - startPosition), Time.deltaTime * 10f);
@@ -77,9 +81,8 @@ namespace CLJ.Runtime
                 }
             }
 
-            isMoving = false;
+           
             onMoveComplete?.Invoke();
-            _stickmanAnimation.ChangeMovingState(false);
         }
     }
 }

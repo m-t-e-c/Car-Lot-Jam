@@ -17,21 +17,53 @@ namespace CLJ.Runtime
 
         private void Update()
         {
-            if (!Input.GetMouseButtonDown(0))
+            if (!Input.GetMouseButtonDown(0) || (_stickman && _stickman.isMoving))
                 return;
 
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
             Physics.Raycast(ray.origin, ray.direction, out RaycastHit hitInfo, Mathf.Infinity, _interactionLayers);
             if (hitInfo.collider != null)
             {
+                
                 if (hitInfo.collider.TryGetComponent(out Stickman stickman))
                 {
+                    if (_stickman)
+                    {
+                        _stickman.CancelSelection();
+                    }
+                    
                     _stickman = stickman;
+                    _stickman.SetSelected();
                 }
 
                 if (hitInfo.collider.TryGetComponent(out Ground ground))
                 {
-                    _stickman.MoveTo(ground.GetCoordinates());
+                    if (ReferenceEquals(_stickman,null))
+                    {
+                        return;
+                    }
+                    
+                    var groundCoord = ground.GetCoordinates();
+                    var hasPath = _stickman.MoveTo(groundCoord);
+                    ground.Highlight(hasPath);
+                }
+
+                if (hitInfo.collider.TryGetComponent(out Car car))
+                {
+                    if (ReferenceEquals(_stickman,null))
+                    {
+                        return;
+                    }
+                    
+                    foreach (Vector2Int carAroundCoord in car.GetAroundCell())
+                    {
+                        var hasPath = _stickman.MoveTo(carAroundCoord);
+                        if (hasPath)
+                        {
+                            car.Highlight();
+                            break;
+                        }
+                    }
                 }
             }
         }
