@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8588196962617455060}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,6 +87,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: cone
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e7806ccf1d68c1c4787b22db7f749095, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e7806ccf1d68c1c4787b22db7f749095, type: 3}
 --- !u!4 &4865476969830695167 stripped
@@ -94,3 +98,21 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e7806ccf1d68c1c4787b22db7f749095, type: 3}
   m_PrefabInstance: {fileID: 4904170387604449044}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5246259439369591365 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e7806ccf1d68c1c4787b22db7f749095, type: 3}
+  m_PrefabInstance: {fileID: 4904170387604449044}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &550535413249488298
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5246259439369591365}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.43731365, y: 0.49657688, z: 0.43731365}
+  m_Center: {x: 0, y: 0.03451614, z: 0}

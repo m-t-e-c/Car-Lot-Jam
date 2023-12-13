@@ -52,11 +52,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 03e59c330c5d54b4ca5b6cd94339073b
-    m_Address: Cube
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 035462947efbefe4eb772a8857151d4e
     m_Address: TRoad
     m_ReadOnly: 0

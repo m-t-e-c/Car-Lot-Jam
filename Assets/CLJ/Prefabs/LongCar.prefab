@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1588036666535474190}
   - component: {fileID: 1563841027362016041}
   - component: {fileID: -9192544024928951541}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: LongCar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineMode: 0
   outlineColor: {r: 0, g: 1, b: 0.11024022, a: 1}
-  outlineWidth: 4
+  outlineWidth: 1
   precomputeOutline: 1
   bakeKeys:
   - {fileID: 7297545176762619209, guid: e4ad95ad101a9864aa9af8231f41b450, type: 3}
@@ -3506,9 +3506,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5418541071474922803, guid: e4ad95ad101a9864aa9af8231f41b450, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -5209035855422687818, guid: e4ad95ad101a9864aa9af8231f41b450, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -5037725900216181554, guid: e4ad95ad101a9864aa9af8231f41b450, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 179036925669568342, guid: e4ad95ad101a9864aa9af8231f41b450, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 188838549423371157, guid: e4ad95ad101a9864aa9af8231f41b450, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e4ad95ad101a9864aa9af8231f41b450, type: 3}
       propertyPath: m_Name
       value: Large-Car-3-Tile
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e4ad95ad101a9864aa9af8231f41b450, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3063139843382334230, guid: e4ad95ad101a9864aa9af8231f41b450, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3842705082376656891, guid: e4ad95ad101a9864aa9af8231f41b450, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4ad95ad101a9864aa9af8231f41b450, type: 3}

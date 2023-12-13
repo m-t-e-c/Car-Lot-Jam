@@ -9,6 +9,8 @@ namespace CLJ.Runtime
 {
     public class Stickman : MonoBehaviour
     {
+        [SerializeField] private ParticleSystem _angerEmojiVFX;
+        [SerializeField] private ParticleSystem _happyEmojiVFX;
         [SerializeField] private StickmanAnimation _stickmanAnimation;
         [SerializeField] private GridObjectColorSetter gridObjectColorSetter;
         [SerializeField] private Outline _outline;
@@ -40,6 +42,16 @@ namespace CLJ.Runtime
             _outline.enabled = false;
         }
 
+        public void PlayHappyEmoji()
+        {
+            _happyEmojiVFX.Play();
+        }
+
+        public void PlayAngerEmoji()
+        {
+            _angerEmojiVFX.Play();
+        }
+  
         public bool MoveTo(Vector2Int targetPosition, Action onMoveComplete = null)
         {
             List<Vector2Int> path = _pathfinder.FindPath(_gridPosition, targetPosition);

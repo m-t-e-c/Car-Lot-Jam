@@ -46,20 +46,22 @@ namespace CLJ.Runtime.Level
 
         async UniTask SpawnGround()
         {
+            _gridPath = new Pathfinder(_levelGrid);
+            
             for (int y = 0; y < _levelGrid.Height; y++)
             {
                 for (int x = 0; x < _levelGrid.Width; x++)
                 {
                     var ground = await GetObjectFromAddressable("Ground");
                     var obj = Instantiate(ground, new Vector3(x, 0, y), Quaternion.identity);
-                    obj.GetComponent<Ground>().SetCoordinates(x, y);
+                    var node = _gridPath.GetNode(new Vector2Int(x, y));
+                    obj.GetComponent<Ground>().SetNode(node);
                     obj.transform.GetChild(1).GetComponent<TextMeshPro>().SetText($"{x},{y}");
                     _spawnedGridCells.Add(new Vector2Int(x, y), obj);
                     obj.transform.parent = _gridHolder.transform;
                 }
             }
 
-            _gridPath = new Pathfinder(_levelGrid);
         }
 
         async UniTask SpawnStraightRoads()

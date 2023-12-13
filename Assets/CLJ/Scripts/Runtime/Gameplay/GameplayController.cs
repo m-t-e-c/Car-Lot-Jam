@@ -44,7 +44,17 @@ namespace CLJ.Runtime
                     }
                     
                     var groundCoord = ground.GetCoordinates();
-                    var hasPath = _stickman.MoveTo(groundCoord);
+                    var hasPath = _stickman.MoveTo(groundCoord, () =>
+                    {
+                        _stickman.CancelSelection();
+                        _stickman = null;
+                    });
+
+                    if (!hasPath)
+                    {
+                        _stickman.PlayAngerEmoji();
+                    }
+                    
                     ground.Highlight(hasPath);
                 }
 
@@ -54,12 +64,18 @@ namespace CLJ.Runtime
                     {
                         return;
                     }
+
+                    if (car.GetAroundCell().Count.Equals(0))
+                    {
+                        _stickman.PlayAngerEmoji();
+                    }
                     
                     foreach (Vector2Int carAroundCoord in car.GetAroundCell())
                     {
                         var hasPath = _stickman.MoveTo(carAroundCoord);
                         if (hasPath)
                         {
+                            _stickman.PlayHappyEmoji();
                             car.Highlight();
                             break;
                         }

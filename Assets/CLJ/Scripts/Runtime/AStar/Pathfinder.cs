@@ -14,12 +14,16 @@ namespace CLJ.Runtime.AStar
             {
                 for (int x = 0; x < levelGrid.Width; x++)
                 {
-                    var cell = levelGrid.Cells[x, y];
-                    _nodes.Add(new Vector2Int(x,y), new Node(new Vector2Int(x, y), cell.gridObject == null));
+                    _nodes.Add(new Vector2Int(x,y), new Node(new Vector2Int(x, y)));
                 }
             }
         }
-
+        
+        public Node GetNode(Vector2Int position)
+        {
+            return _nodes[position];
+        }
+        
         public List<Vector2Int> FindPath(Vector2Int start, Vector2Int target)
         {
             Node startNode = _nodes[start];
@@ -51,7 +55,7 @@ namespace CLJ.Runtime.AStar
 
                 foreach (Node neighbour in GetNeighbours(currentNode))
                 {
-                    if (!neighbour.IsWalkable || closedSet.Contains(neighbour))
+                    if (neighbour.IsOccupied || closedSet.Contains(neighbour))
                     {
                         continue;
                     }
@@ -86,7 +90,7 @@ namespace CLJ.Runtime.AStar
             foreach (var direction in directions)
             {
                 Vector2Int checkPos = new Vector2Int(node.Position.x + direction.x, node.Position.y + direction.y);
-                if (_nodes.ContainsKey(checkPos) && _nodes[checkPos].IsWalkable)
+                if (_nodes.ContainsKey(checkPos) && !_nodes[checkPos].IsOccupied)
                 {
                     neighbours.Add(_nodes[checkPos]);
                 }

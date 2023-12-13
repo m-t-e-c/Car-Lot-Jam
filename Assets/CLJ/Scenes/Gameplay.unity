@@ -154,7 +154,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridWidth: 5
   gridHeight: 5
-  selectedCellObjectDirection: 3
+  selectedCellDirection: 1
+  selectedCellColor: 0
   gridObjectsGroup: {fileID: 11400000, guid: f004648adf224c44d9a0b4daed234fde, type: 2}
 --- !u!4 &140484642
 Transform:
@@ -477,7 +478,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraHolder: {fileID: 1360898244}
-  _levelIndex: 4
+  _levelIndex: 1
 --- !u!4 &1074731233
 Transform:
   m_ObjectHideFlags: 0

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -5857948543703195382}
   - component: {fileID: 72241136540463687}
   - component: {fileID: 6480371045684189900}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SmallCar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineMode: 0
   outlineColor: {r: 0, g: 1, b: 0.11024022, a: 1}
-  outlineWidth: 4
+  outlineWidth: 1
   precomputeOutline: 1
   bakeKeys:
   - {fileID: 8825875481077153662, guid: 57e12d09026e31f4e807953410daf785, type: 3}
@@ -2477,9 +2477,61 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2723508682925603208, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -1802104617782237177, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -1564476395453268024, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -1559835322832510818, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 57e12d09026e31f4e807953410daf785, type: 3}
       propertyPath: m_Name
       value: Small-Car-2-Tile
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1019259283533412720, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517854477164285474, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4683554604293239993, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4982148816843181197, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5015958397178129206, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5043796673221590182, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6559524720771569491, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 9070412853080370652, guid: 57e12d09026e31f4e807953410daf785, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57e12d09026e31f4e807953410daf785, type: 3}
