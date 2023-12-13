@@ -4,9 +4,16 @@ namespace CLJ.Managers.LevelManager
 {
     public class LevelManager : ILevelManager
     {
-        public LevelGrid GetCurrentLevel()
+        private int _levelIndex;
+        
+        public LevelManager(int levelIndex)
         {
-            return null;
+            _levelIndex = levelIndex;
+        }
+        
+        public LevelGrid GetLevelGrid()
+        {
+            return LevelCreator.LoadLevel(_levelIndex);
         }
     }
 }

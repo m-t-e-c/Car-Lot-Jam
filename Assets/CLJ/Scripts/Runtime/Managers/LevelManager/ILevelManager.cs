@@ -4,6 +4,6 @@ namespace CLJ.Managers.LevelManager
 {
     public interface ILevelManager
     {
-        public LevelGrid GetCurrentLevel();
+        public LevelGrid GetLevelGrid();
     }
 }
