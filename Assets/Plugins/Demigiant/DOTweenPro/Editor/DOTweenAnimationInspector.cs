@@ -67,7 +67,7 @@ namespace DG.DOTweenEditor
                 typeof(SpriteRenderer),
 #endif
 #if true // UI_MARKER
-                typeof(Image), typeof(Text), typeof(RawImage), typeof(Graphic),
+                typeof(Image), typeof(Text), typeof(RawImage),
 #endif
                 typeof(Renderer),
             }},
@@ -77,7 +77,7 @@ namespace DG.DOTweenEditor
                 typeof(SpriteRenderer),
 #endif
 #if true // UI_MARKER
-                typeof(Image), typeof(Text), typeof(CanvasGroup), typeof(RawImage), typeof(Graphic),
+                typeof(Image), typeof(Text), typeof(CanvasGroup), typeof(RawImage),
 #endif
                 typeof(Renderer),
             }},
@@ -108,7 +108,6 @@ namespace DG.DOTweenEditor
             { DOTweenAnimation.AnimationType.CameraRect, new[] { typeof(Camera) } },
 #if true // UI_MARKER
             { DOTweenAnimation.AnimationType.UIWidthHeight, new[] { typeof(RectTransform) } },
-            { DOTweenAnimation.AnimationType.FillAmount, new[] { typeof(Image) } },
 #endif
         };
 
@@ -135,7 +134,6 @@ namespace DG.DOTweenEditor
             "Scale",
             "Color", "Fade",
 #if true // UI_MARKER
-            "FillAmount",
             "Text",
 #endif
 #if false // TK2D_MARKER
@@ -338,10 +336,7 @@ namespace DG.DOTweenEditor
 //                _src.animationType = (DOTweenAnimation.AnimationType)EditorGUILayout.EnumPopup(_src.animationType, EditorGUIUtils.popupButton);
                 GUI.enabled = GUI.enabled && _src.isActive;
                 _src.animationType = AnimationToDOTweenAnimationType(_AnimationType[EditorGUILayout.Popup(DOTweenAnimationTypeToPopupId(_src.animationType), _AnimationType)]);
-                _src.autoGenerate = DeGUILayout.ToggleButton(_src.autoGenerate, new GUIContent("AutoGenerate", "If selected, the tween will be generated at startup (during Start for RectTransform position tween, Awake for all the others)"));
-                if (_src.autoGenerate) {
-                    _src.autoPlay = DeGUILayout.ToggleButton(_src.autoPlay, new GUIContent("AutoPlay", "If selected, the tween will play automatically"));
-                }
+                _src.autoPlay = DeGUILayout.ToggleButton(_src.autoPlay, new GUIContent("AutoPlay", "If selected, the tween will play automatically"));
                 _src.autoKill = DeGUILayout.ToggleButton(_src.autoKill, new GUIContent("AutoKill", "If selected, the tween will be killed when it completes, and won't be reusable"));
                 GUILayout.EndHorizontal();
                 if (prevAnimType != _src.animationType) {
@@ -362,9 +357,6 @@ namespace DG.DOTweenEditor
                         _src.endValueV3 = Vector3.zero;
                         _src.endValueFloat = 0;
                         _src.optionalBool0 = _src.animationType == DOTweenAnimation.AnimationType.UIWidthHeight;
-                        break;
-                    case DOTweenAnimation.AnimationType.FillAmount:
-                        _src.endValueFloat = 1;
                         break;
                     case DOTweenAnimation.AnimationType.Color:
                     case DOTweenAnimation.AnimationType.Fade:
@@ -389,7 +381,6 @@ namespace DG.DOTweenEditor
                         _src.optionalInt0 = 10;
                         _src.optionalFloat0 = 90;
                         _src.optionalBool0 = false;
-                        _src.optionalBool1 = true;
                         break;
                     case DOTweenAnimation.AnimationType.CameraAspect:
                     case DOTweenAnimation.AnimationType.CameraFieldOfView:
@@ -472,7 +463,7 @@ namespace DG.DOTweenEditor
                 _src.delay = EditorGUILayout.FloatField("Delay", _src.delay);
                 if (_src.delay < 0) _src.delay = 0;
                 _src.isIndependentUpdate = EditorGUILayout.Toggle("Ignore TimeScale", _src.isIndependentUpdate);
-                _src.easeType = EditorGUIUtils.FilteredEasePopup("Ease", _src.easeType);
+                _src.easeType = EditorGUIUtils.FilteredEasePopup(_src.easeType);
                 if (_src.easeType == Ease.INTERNAL_Custom) {
                     _src.easeCurve = EditorGUILayout.CurveField("   Ease Curve", _src.easeCurve);
                 }
@@ -510,12 +501,6 @@ namespace DG.DOTweenEditor
                     else GUIEndValueV2();
                     _src.optionalBool0 = EditorGUILayout.Toggle("Uniform Scale", _src.optionalBool0);
                     break;
-                case DOTweenAnimation.AnimationType.FillAmount:
-                    GUIEndValueFloat();
-                    if (_src.endValueFloat < 0) _src.endValueFloat = 0;
-                    if (_src.endValueFloat > 1) _src.endValueFloat = 1;
-                    canBeRelative = false;
-                    break;
                 case DOTweenAnimation.AnimationType.Color:
                     GUIEndValueColor();
                     canBeRelative = false;
@@ -547,11 +532,7 @@ namespace DG.DOTweenEditor
                     GUIEndValueV3(targetGO);
                     canBeRelative = false;
                     _src.optionalInt0 = EditorGUILayout.IntSlider(new GUIContent("    Vibrato", "How much will the shake vibrate"), _src.optionalInt0, 1, 50);
-                    using (new GUILayout.HorizontalScope()) {
-                        _src.optionalFloat0 = EditorGUILayout.Slider(new GUIContent("    Randomness", "The shake randomness"), _src.optionalFloat0, 0, 90);
-                        _src.optionalShakeRandomnessMode = (ShakeRandomnessMode)EditorGUILayout.EnumPopup(_src.optionalShakeRandomnessMode, GUILayout.Width(70));
-                    }
-                    _src.optionalBool1 = EditorGUILayout.Toggle(new GUIContent("    FadeOut", "If selected the shake will fade out, otherwise it will constantly play with full force"), _src.optionalBool1);
+                    _src.optionalFloat0 = EditorGUILayout.Slider(new GUIContent("    Randomness", "The shake randomness"), _src.optionalFloat0, 0, 90);
                     if (_src.animationType == DOTweenAnimation.AnimationType.ShakePosition) _src.optionalBool0 = EditorGUILayout.Toggle("    Snapping", _src.optionalBool0);
                     break;
                 case DOTweenAnimation.AnimationType.CameraAspect:
