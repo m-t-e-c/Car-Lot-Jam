@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2812311109334777573
 RectTransform:
   m_ObjectHideFlags: 0
@@ -219,6 +219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7836739a0024870ba84d552a9048bc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _renderer: {fileID: 2202518834888317654}
 --- !u!65 &8071235352298714544
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -296,5 +297,10 @@ PrefabInstance:
 --- !u!4 &1070669141326684601 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 929aff88dff62bd47ba14599a8008a98, type: 3}
+  m_PrefabInstance: {fileID: 671456994347091538}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &2202518834888317654 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 929aff88dff62bd47ba14599a8008a98, type: 3}
   m_PrefabInstance: {fileID: 671456994347091538}
   m_PrefabAsset: {fileID: 0}

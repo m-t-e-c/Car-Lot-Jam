@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6454102269892881674}
   - component: {fileID: 6454102269892881677}
   - component: {fileID: 6454102269892881676}
+  - component: {fileID: 821432971560254100}
   - component: {fileID: 6454102269892881679}
   m_Layer: 6
   m_Name: Stickman
@@ -47,9 +48,9 @@ CapsuleCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.20661378
-  m_Height: 1.0410591
+  m_Height: 0.6921156
   m_Direction: 1
-  m_Center: {x: 0, y: 0.49661595, z: 0}
+  m_Center: {x: 0, y: 0.32214418, z: 0}
 --- !u!114 &6454102269892881677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,7 +63,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67de9f508ad345e6a3161af3f0369fd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  _stickmanAnimation: {fileID: 6454102269892881676}
+  gridObjectColorSetter: {fileID: 821432971560254100}
+  _outline: {fileID: 6454102269892881679}
+  _moveSpeed: 2
+  isMoving: 0
 --- !u!114 &6454102269892881676
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,6 +81,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 647118084420114923}
+--- !u!114 &821432971560254100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6454102269892881672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60a2da48736c4305a173fd486fcb0e52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _renderers:
+  - {fileID: 7766287099469649662}
+  _colorMaterials:
+  - {fileID: 2100000, guid: 793a522c8da431242891ec4c6ae73612, type: 2}
+  - {fileID: 2100000, guid: e26e6e6fe742a704997ff89195e34c02, type: 2}
+  - {fileID: 2100000, guid: 0960c98f60f8986448cfebd8e959a532, type: 2}
+  - {fileID: 2100000, guid: 8fda74129e9bd534a9747d4950d93149, type: 2}
+  - {fileID: 2100000, guid: fbcdce289d6398b43800a6d81f966593, type: 2}
+  - {fileID: 2100000, guid: beb67f98041f66b4fb6abe38ec30aafc, type: 2}
+  - {fileID: 2100000, guid: 67239989e9851f346b41cf27f03eee02, type: 2}
+  - {fileID: 2100000, guid: 6dbda1b7224a7a845a4d48681f78b767, type: 2}
 --- !u!114 &6454102269892881679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,7 +118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineMode: 0
   outlineColor: {r: 0, g: 1, b: 0.11024022, a: 1}
-  outlineWidth: 2
+  outlineWidth: 4
   precomputeOutline: 1
   bakeKeys: []
   bakeValues: []
@@ -148,7 +176,7 @@ PrefabInstance:
     - target: {fileID: -5596013728043535740, guid: 282996b427f38034bae033b8946670cf, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: ddafe325e0cf6c14cb0776834aea8e53, type: 2}
+      objectReference: {fileID: 2100000, guid: da17aff52af473843995073e618f192d, type: 2}
     - target: {fileID: 919132149155446097, guid: 282996b427f38034bae033b8946670cf, type: 3}
       propertyPath: m_Name
       value: stickman-tpose
@@ -171,5 +199,10 @@ Animator:
 --- !u!4 &6781060584724644753 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 282996b427f38034bae033b8946670cf, type: 3}
+  m_PrefabInstance: {fileID: 6454102270720550010}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7766287099469649662 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -5596013728043535740, guid: 282996b427f38034bae033b8946670cf, type: 3}
   m_PrefabInstance: {fileID: 6454102270720550010}
   m_PrefabAsset: {fileID: 0}
