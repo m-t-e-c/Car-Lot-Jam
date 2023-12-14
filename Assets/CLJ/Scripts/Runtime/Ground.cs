@@ -56,7 +56,7 @@ namespace CLJ.Runtime
 
         public Vector2Int GetCoordinates()
         {
-            return _node.Position;
+            return _node.Coordinate;
         }
 
         private void OnDrawGizmos()

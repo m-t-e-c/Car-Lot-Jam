@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using CLJ.Runtime.Level;
+using CLJ.Scripts;
 using UnityEngine;
 
 namespace CLJ.Runtime.AStar
 {
     public class Pathfinder
     {
-        private readonly Dictionary<Vector2Int, Node> _nodes = new();
+        private readonly List<Node> _nodes = new();
+        private int _pathWidth;
+        private int _pathHeight;
 
         public Pathfinder(LevelGrid levelGrid)
         {
@@ -14,20 +17,55 @@ namespace CLJ.Runtime.AStar
             {
                 for (int x = 0; x < levelGrid.Width; x++)
                 {
-                    _nodes.Add(new Vector2Int(x,y), new Node(new Vector2Int(x, y)));
+                    _nodes.Add(new Node(new Vector2Int(x,y),new Vector2Int(x, -y)));
                 }
             }
         }
         
-        public Node GetNode(Vector2Int position)
+        public Node GetLastNode()
         {
-            return _nodes[position];
+            return _nodes[^1];
         }
         
-        public List<Vector2Int> FindPath(Vector2Int start, Vector2Int target)
+        public Pathfinder(Vector2Int[,] path)
         {
-            Node startNode = _nodes[start];
-            Node targetNode = _nodes[target];
+            _pathWidth = path.GetUpperBound(0);
+            _pathHeight = path.GetUpperBound(1);
+            
+            for (int y = 0; y < _pathHeight + 1; y++)
+            {
+                for (int x = 0; x < _pathWidth + 1; x++)
+                {
+                    bool isOccupied = x >= 1 && x <= _pathWidth - 1 && y >= 1 && y <= _pathHeight - 1;
+                    _nodes.Add(new Node(new Vector2Int(x,y),path[x,y], isOccupied));
+                }
+            }
+            
+            for (int i = 1; i < 30; i++)
+            {
+                _nodes.Add(new Node(new Vector2Int(0, -i), new Vector2Int(-1, i)));
+            }
+        }
+
+        public int GetPathWidth()
+        {
+            return _pathWidth;
+        }
+        
+        public int GetPathHeight()
+        {
+            return _pathHeight;
+        }
+        
+        public Node GetNode(Vector2Int coordinate)
+        {
+            return _nodes.Find(node => node.Coordinate.Equals(coordinate));
+        }
+        
+        public List<Vector2Int> FindPath(Vector2Int startCoordinate, Vector2Int targetCoordinate)
+        {
+            Node startNode = _nodes.Find(node => node.Coordinate.Equals(startCoordinate));
+            Node targetNode = _nodes.Find(node => node.Coordinate.Equals(targetCoordinate));
 
             List<Node> openList = new List<Node>();
             HashSet<Node> closedSet = new HashSet<Node>();
@@ -89,10 +127,13 @@ namespace CLJ.Runtime.AStar
 
             foreach (var direction in directions)
             {
-                Vector2Int checkPos = new Vector2Int(node.Position.x + direction.x, node.Position.y + direction.y);
-                if (_nodes.ContainsKey(checkPos) && !_nodes[checkPos].IsOccupied)
+                Vector2Int checkPos = new Vector2Int(node.Coordinate.x + direction.x, node.Coordinate.y + direction.y);
+                
+                var neighbour = _nodes.Find(n => n.Coordinate.Equals(checkPos));
+                
+                if (neighbour != null && !neighbour.IsOccupied)
                 {
-                    neighbours.Add(_nodes[checkPos]);
+                    neighbours.Add(neighbour);
                 }
             }
 
