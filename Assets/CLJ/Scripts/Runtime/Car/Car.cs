@@ -10,19 +10,33 @@ namespace CLJ.Runtime
 {
     public class Car : MonoBehaviour
     {
-        [SerializeField] private Transform _doorEnterTransform;
+        #region Animation Hashes
+        private static readonly int OpenDoor = Animator.StringToHash("OpenDoor");
+        private static readonly int DoorIndex = Animator.StringToHash("DoorIndex");
+        #endregion
+
+        [Header("Animation References")]
+        [SerializeField] private Animator _animator;
+        [SerializeField] private Transform _leftDoorEnterTransform;
+        [SerializeField] private Transform _rightDoorEnterTransform;
         [SerializeField] private Transform _seatTransform;
-        [SerializeField] private CarAnimations _carAnimations;
+        [SerializeField] private Transform _carBody;
+
+        [Header("Other References")]
         [SerializeField] private GridObjectColorSetter _gridObjectColorSetter;
+        [SerializeField] private GameObject _smokeParticles;
         [SerializeField] private Outline _outline;
+        [SerializeField] private LayerMask _moveBlockLayers;
 
         private CellColor _cellColor;
-        
         private Vector2Int _gridPosition;
         private CellDirection _direction;
         private List<Vector2Int> _aroundCells;
         private Pathfinder _pathfinder;
-        
+
+        private bool _isReadyToGo;
+        private bool _isMoving;
+
         public void Init(CellColor color, Pathfinder pathfinder, Vector2Int gridPosition, CellDirection direction, List<Vector2Int> aroundCells)
         {
             _aroundCells = aroundCells;
@@ -33,38 +47,63 @@ namespace CLJ.Runtime
             _gridObjectColorSetter.SetColor(_cellColor);
         }
         
+        public CellDirection GetDirection()
+        {
+            return _direction;
+        }
+        
         public CellColor GetColor()
         {
             return _cellColor;
         }
+
+        public Vector3 GetDoorPosition(bool isLeft)
+        {
+            return isLeft ? _leftDoorEnterTransform.position : _rightDoorEnterTransform.position;
+        }
+
+        public Vector3 GetSeatPosition()
+        {
+            return _seatTransform.position;
+        }
         
-        public void SetStickman(Stickman stickman)
+        public List<Vector2Int> GetAroundCells()
         {
-            _carAnimations.PlayDoorOpenAnimation();
-            stickman.transform.DOMove(_doorEnterTransform.position, 2f).OnComplete(() =>
-            {
-                _carAnimations.PlayDoorCloseAnimation();
-                stickman.transform.parent = _seatTransform;
-            });
-            stickman.GetComponent<StickmanAnimation>().PlayEnterCarAnimation();
+            return _aroundCells;
+        }
+        
+        public void Highlight()
+        {
+            _outline.enabled = true;
+        }
+
+        public void SetReady()
+        {
             _outline.enabled = false;
+            _isReadyToGo = true;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (_isMoving)
+                return;
+
+            if (_isReadyToGo)
             {
-                Move();
-            }
-            
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                MoveTo(_pathfinder.GetLastNode().Coordinate);
+                Ray ray = new Ray(transform.position + Vector3.up * 0.5f, transform.forward);
+                Debug.DrawRay(ray.origin, ray.direction * 50, Color.magenta);
+                Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 50f,_moveBlockLayers);
+                if (hit.collider)
+                    return;
+                
+                ExitToRoad();
             }
         }
 
-        public void Move()
+        public void ExitToRoad()
         {
+            _isMoving = true;
+            _smokeParticles.SetActive(true);
             Vector2Int key = Vector2Int.zero;
             Vector2Int target = Vector2Int.zero;
             if (_direction == CellDirection.Right)
@@ -95,6 +134,7 @@ namespace CLJ.Runtime
                 .OnComplete(() =>
                 {
                     _gridPosition = key;
+                    MoveTo(new Vector2Int(0, -28));
                 });
         }
         
@@ -133,15 +173,26 @@ namespace CLJ.Runtime
 
             onMoveComplete?.Invoke();
         }
-
-        public List<Vector2Int> GetAroundCells()
+        
+        #region Animation Methods
+        public void PlayOpenDoorAnimation(bool isLeft)
         {
-            return _aroundCells;
+            _animator.SetInteger(DoorIndex, isLeft ? -1 : 1);
+            _animator.SetBool(OpenDoor, true);
+        }
+        
+        public void PlayCloseDoorAnimation()
+        {
+            _animator.SetBool(OpenDoor, false);
+        }
+        
+        public void PlayAccelerateAnimation()
+        {
+            _carBody
+                .DOLocalRotate(new Vector3(-15f, 0f,0f ), 0.5f)
+                .SetLoops(2, LoopType.Yoyo);
         }
 
-        public void Highlight()
-        {
-            _outline.enabled = true;
-        }
+        #endregion
     }
 }

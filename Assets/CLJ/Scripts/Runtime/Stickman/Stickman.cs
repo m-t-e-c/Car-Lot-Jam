@@ -9,17 +9,22 @@ namespace CLJ.Runtime
 {
     public class Stickman : MonoBehaviour
     {
+        #region Animation Hashes
+        private static readonly int Selected = Animator.StringToHash("Selected");
+        private static readonly int IsMoving = Animator.StringToHash("Moving");
+        private static readonly int EnterTheCar = Animator.StringToHash("EnterTheCar");
+        #endregion
+        
+        [SerializeField] private Animator _animator;
         [SerializeField] private ParticleSystem _angerEmojiVFX;
         [SerializeField] private ParticleSystem _happyEmojiVFX;
-        [SerializeField] private StickmanAnimation _stickmanAnimation;
         [SerializeField] private GridObjectColorSetter gridObjectColorSetter;
         [SerializeField] private Outline _outline;
         [SerializeField] private float _moveSpeed = 5f;
-
         private Pathfinder _pathfinder;
         private Vector2Int _gridPosition;
-
         private CellColor _cellColor;
+        
         public bool isMoving;
 
         public void Init(Pathfinder pathfinder, Vector2Int position, CellColor color)
@@ -33,7 +38,7 @@ namespace CLJ.Runtime
 
         public void SetSelected()
         {
-            _stickmanAnimation.PlaySelectedAnimation();
+            _animator.SetTrigger(Selected);
             _outline.enabled = _outline.enabled == false;
         }
         
@@ -50,6 +55,21 @@ namespace CLJ.Runtime
         public void PlayAngerEmoji()
         {
             _angerEmojiVFX.Play();
+        }
+
+        public void PlayEnterCarAnimation()
+        {
+            _animator.SetTrigger(EnterTheCar);
+        }
+
+        public CellColor GetColor()
+        {
+            return _cellColor;
+        }
+       
+        public void ChangeMovingState(bool state)
+        {
+            _animator.SetBool(IsMoving, state);
         }
   
         public bool MoveTo(Vector2Int targetPosition, Action onMoveComplete = null)
@@ -69,7 +89,7 @@ namespace CLJ.Runtime
         private IEnumerator FollowPath(List<Vector2Int> path, Action onMoveComplete = null)
         {
             isMoving = true;
-            _stickmanAnimation.ChangeMovingState(true);
+            ChangeMovingState(true);
 
             foreach (var point in path)
             {
@@ -90,8 +110,8 @@ namespace CLJ.Runtime
             }
 
             isMoving = false;
+            ChangeMovingState(false);
             onMoveComplete?.Invoke();
-            _stickmanAnimation.ChangeMovingState(false);
         }
     }
 }

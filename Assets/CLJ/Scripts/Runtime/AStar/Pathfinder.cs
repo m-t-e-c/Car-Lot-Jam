@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using CLJ.Runtime.Level;
-using CLJ.Scripts;
 using UnityEngine;
 
 namespace CLJ.Runtime.AStar

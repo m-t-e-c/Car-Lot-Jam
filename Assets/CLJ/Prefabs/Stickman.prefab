@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6454102269892881675}
   - component: {fileID: 6454102269892881674}
   - component: {fileID: 6454102269892881677}
-  - component: {fileID: 6454102269892881676}
   - component: {fileID: 821432971560254100}
   m_Layer: 6
   m_Name: Stickman
@@ -64,26 +63,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67de9f508ad345e6a3161af3f0369fd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 647118084420114923}
   _angerEmojiVFX: {fileID: 8349753312111583908}
   _happyEmojiVFX: {fileID: 9097476266175254186}
-  _stickmanAnimation: {fileID: 6454102269892881676}
   gridObjectColorSetter: {fileID: 821432971560254100}
   _outline: {fileID: 5188932674873870616}
-  _moveSpeed: 2
+  _moveSpeed: 4
   isMoving: 0
---- !u!114 &6454102269892881676
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6454102269892881672}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a53209c82f9448c8688eccea469e576, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animator: {fileID: 647118084420114923}
 --- !u!114 &821432971560254100
 MonoBehaviour:
   m_ObjectHideFlags: 0

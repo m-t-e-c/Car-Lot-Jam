@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using CLJ.Managers.LevelManager;
 using CLJ.Runtime.AStar;
-using CLJ.Scripts;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -114,10 +113,6 @@ namespace CLJ.Runtime.Level
                 var neighbourCoord = targetCoord + direction;
                 if (IsWithinGrid(neighbourCoord))
                 {
-                    var cell = _levelGrid.Cells[neighbourCoord.x, neighbourCoord.y];
-                    if (cell.isSpawned)
-                        continue;
-
                     if (linkedCells.Contains(neighbourCoord))
                         continue;
 

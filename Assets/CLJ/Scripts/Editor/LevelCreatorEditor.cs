@@ -38,7 +38,7 @@ namespace CLJ
                 ReferenceEquals(grid.Cells, null) ||
                 !grid.Width.Equals(_levelCreator.gridWidth) ||
                 !grid.Height.Equals(_levelCreator.gridHeight)
-                )
+            )
             {
                 EditorGUILayout.HelpBox("Please regenerate the Grid!", MessageType.Error);
                 return;
@@ -74,11 +74,13 @@ namespace CLJ
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("Generate Grid"))
             {
+                ResetButtons();
                 _levelCreator.GenerateGrid();
             }
 
             if (GUILayout.Button("Reset"))
             {
+                ResetButtons();
                 _levelCreator.ResetGrid();
             }
 
@@ -96,7 +98,7 @@ namespace CLJ
             EditorGUILayout.LabelField("Select Object To Place:", EditorStyles.boldLabel);
 
             EditorGUILayout.BeginHorizontal();
-            
+
             for (var i = -1; i < _levelCreator.gridObjectsGroup.GridObjects.Count; i++)
             {
                 if (i.Equals(-1))
@@ -132,12 +134,11 @@ namespace CLJ
                     _selectedGridObjectIndex = i;
                 }
             }
-            
+
             EditorGUILayout.EndHorizontal();
-            
         }
 
-        
+
         private void DrawColorButtons()
         {
             EditorGUILayout.Space();
@@ -145,13 +146,13 @@ namespace CLJ
 
             EditorGUILayout.BeginHorizontal();
 
-            for (int i = -1; i <  Enum.GetValues(typeof(CellColor)).Length; i++)
+            for (int i = -1; i < Enum.GetValues(typeof(CellColor)).Length; i++)
             {
                 if (i.Equals(0))
                 {
                     continue;
                 }
-                
+
                 if (i.Equals(-1))
                 {
                     if (_selectedColorIndex.Equals(-1))
@@ -167,7 +168,7 @@ namespace CLJ
 
                     continue;
                 }
-                
+
                 CellColor color = (CellColor)i;
                 if (_selectedColorIndex.Equals((int)color))
                 {
@@ -184,10 +185,10 @@ namespace CLJ
                     _selectedColorIndex = (int)color;
                 }
             }
-            
+
             EditorGUILayout.EndHorizontal();
         }
-        
+
         private void DrawDirectionButtons()
         {
             if (ReferenceEquals(_levelCreator.gridObjectsGroup, null))
@@ -219,7 +220,7 @@ namespace CLJ
 
             EditorGUILayout.EndHorizontal();
         }
-      
+
         private void DrawGrid()
         {
             GUIStyle style = new GUIStyle(GUI.skin.button);
@@ -232,9 +233,9 @@ namespace CLJ
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("Grid", EditorStyles.boldLabel);
-            
+
             for (int y = 0; y < _levelCreator.gridHeight; y++)
-            {  
+            {
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace();
 
@@ -253,18 +254,17 @@ namespace CLJ
                         cellText = $"{cell.gridObject.gridObjectType} {cell.cellDirection}";
                     }
 
-                    if (GUILayout.Button(cellText, style,GUILayout.Width(80), GUILayout.Height(80)))
+                    if (GUILayout.Button(cellText, style, GUILayout.Width(80), GUILayout.Height(80)))
                     {
                         _levelCreator.GridButtonAction(x, y);
                     }
                 }
-                
+
                 GUILayout.FlexibleSpace();
                 EditorGUILayout.EndHorizontal();
-                
+
                 GUI.backgroundColor = Color.white;
             }
-            
         }
 
         private void DrawSaveLoadButtons()
@@ -295,10 +295,22 @@ namespace CLJ
             EditorGUILayout.EndHorizontal();
         }
 
+        private void ResetButtons()
+        {
+            _levelCreator.SetObjectColor(CellColor.None);
+            _levelCreator.SetObjectDirection(CellDirection.Left);
+            _levelCreator.SetObjectToPlace(null);
+            _selectedColorIndex = -1;
+            _selectedDirectionIndex = 0;
+            _selectedGridObjectIndex = -1;
+        }
+
         private Color32 GetColorByColorType(CellColor color)
         {
             switch (color)
             {
+                case CellColor.None:
+                    return Color.white;
                 case CellColor.Red:
                     return new Color32(255, 0, 0, 255);
                 case CellColor.Green:
