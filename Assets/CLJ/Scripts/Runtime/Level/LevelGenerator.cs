@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using CLJ.Managers.LevelManager;
+﻿using System.Collections.Generic;
 using CLJ.Runtime.AStar;
+using CLJ.Runtime.Managers.LevelManager;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -38,13 +37,13 @@ namespace CLJ.Runtime.Level
         private void InitializeCamera()
         {
             _cameraHolder = Locator.Instance.Resolve<CameraHolder>();
-            _cameraHolder.Init(_levelGrid.Height >= 6 ? CameraType.Orthographic : CameraType.Perspective);
+            _cameraHolder.Init(_levelGrid.height >= 6 ? CameraType.Orthographic : CameraType.Perspective);
         }
 
         private void InitializePath()
         {
-            int pathWidth = _levelGrid.Width + 2;
-            int pathHeight = _levelGrid.Height + 2;
+            int pathWidth = _levelGrid.width + 2;
+            int pathHeight = _levelGrid.height + 2;
 
             _path = new Vector2Int[pathWidth, pathHeight];
             for (int y = 0; y < pathHeight; y++)
@@ -68,9 +67,9 @@ namespace CLJ.Runtime.Level
             _gridPath = new Pathfinder(_levelGrid);
 
             GameObject gridParent = new GameObject("Grid");
-            for (int y = 0; y < _levelGrid.Height; y++)
+            for (int y = 0; y < _levelGrid.height; y++)
             {
-                for (int x = 0; x < _levelGrid.Width; x++)
+                for (int x = 0; x < _levelGrid.width; x++)
                 {
                     GameObject groundPrefab = await GetObjectFromAddressable("Ground");
                     Vector3 spawnPosition = new Vector3(x, 0, -y);
@@ -108,18 +107,18 @@ namespace CLJ.Runtime.Level
 
         private bool IsWithinGrid(Vector2Int coordinate)
         {
-            return coordinate.x >= 0 && coordinate.x < _levelGrid.Width && coordinate.y >= 0 &&
-                   coordinate.y < _levelGrid.Height;
+            return coordinate.x >= 0 && coordinate.x < _levelGrid.width && coordinate.y >= 0 &&
+                   coordinate.y < _levelGrid.height;
         }
 
         private async void SpawnObjects()
         {
             GameObject levelObjectsParent = new GameObject("LevelObjects");
-            for (int y = 0; y < _levelGrid.Height; y++)
+            for (int y = 0; y < _levelGrid.height; y++)
             {
-                for (int x = 0; x < _levelGrid.Width; x++)
+                for (int x = 0; x < _levelGrid.width; x++)
                 {
-                    GridCell cell = _levelGrid.Cells[x, y];
+                    GridCell cell = _levelGrid.cells[x, y];
                     if (cell == null || cell.gridObject == null || cell.isSpawned) continue;
 
                     cell.linkedCellCoordinates.Add(new Vector2Int(x, y));
@@ -162,27 +161,27 @@ namespace CLJ.Runtime.Level
             GameObject tRoadPrefab = await GetObjectFromAddressable("TRoad");
             GameObject cornerRoadPrefab = await GetObjectFromAddressable("CornerRoad");
 
-            for (int i = 0; i < _levelGrid.Width; i++)
+            for (int i = 0; i < _levelGrid.width; i++)
             {
                 Vector3 topPosition = new Vector3(i, 0, 1);
-                Vector3 bottomPosition = new Vector3(i, 0, -_levelGrid.Height);
+                Vector3 bottomPosition = new Vector3(i, 0, -_levelGrid.height);
                 Quaternion rotation = Quaternion.Euler(0, 90, 0);
                 Instantiate(straightRoadPrefab, topPosition, rotation, roadsParent.transform);
                 Instantiate(straightRoadPrefab, bottomPosition, rotation, roadsParent.transform);
             }
 
-            for (int i = 0; i < _levelGrid.Height; i++)
+            for (int i = 0; i < _levelGrid.height; i++)
             {
-                Vector3 rightPosition = new Vector3(_levelGrid.Width, 0, -i);
+                Vector3 rightPosition = new Vector3(_levelGrid.width, 0, -i);
                 Vector3 leftPosition = new Vector3(-1, 0, -i);
                 Instantiate(straightRoadPrefab, rightPosition, Quaternion.identity, roadsParent.transform);
                 Instantiate(straightRoadPrefab, leftPosition, Quaternion.identity, roadsParent.transform);
             }
 
             Vector3 topLeftPosition = new Vector3(-1, 0, 1);
-            Vector3 topRightPosition = new Vector3(_levelGrid.Width, 0, 1);
-            Vector3 bottomRightPosition = new Vector3(_levelGrid.Width, 0, -_levelGrid.Height);
-            Vector3 bottomLeftPosition = new Vector3(-1, 0, -_levelGrid.Height);
+            Vector3 topRightPosition = new Vector3(_levelGrid.width, 0, 1);
+            Vector3 bottomRightPosition = new Vector3(_levelGrid.width, 0, -_levelGrid.height);
+            Vector3 bottomLeftPosition = new Vector3(-1, 0, -_levelGrid.height);
 
             Instantiate(cornerRoadPrefab, topRightPosition, Quaternion.Euler(0, 90, 0), roadsParent.transform);
             Instantiate(cornerRoadPrefab, bottomLeftPosition, Quaternion.Euler(0, 270, 0), roadsParent.transform);
@@ -207,7 +206,7 @@ namespace CLJ.Runtime.Level
         {
             foreach (Vector2Int coordinate in linkedCells)
             {
-                GridCell linkedCell = _levelGrid.Cells[coordinate.x, coordinate.y];
+                GridCell linkedCell = _levelGrid.cells[coordinate.x, coordinate.y];
                 linkedCell.isSpawned = true;
             }
         }

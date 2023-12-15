@@ -2,6 +2,16 @@
 
 namespace CLJ.Runtime.Level
 {
+    public enum GridObjectType
+    {
+        None,
+        SmallCar,
+        LongCar,
+        Stickman,
+        Cone,
+        Barrier
+    }
+    
     [Serializable]
     public class GridObject
     {

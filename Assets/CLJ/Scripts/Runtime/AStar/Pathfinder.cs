@@ -7,14 +7,14 @@ namespace CLJ.Runtime.AStar
     public class Pathfinder
     {
         private readonly List<Node> _nodes = new();
-        private int _pathWidth;
-        private int _pathHeight;
+        private readonly int _pathWidth;
+        private readonly int _pathHeight;
 
         public Pathfinder(LevelGrid levelGrid)
         {
-            for (int y = 0; y < levelGrid.Height; y++)
+            for (int y = 0; y < levelGrid.height; y++)
             {
-                for (int x = 0; x < levelGrid.Width; x++)
+                for (int x = 0; x < levelGrid.width; x++)
                 {
                     _nodes.Add(new Node(new Vector2Int(x,y),new Vector2Int(x, -y)));
                 }

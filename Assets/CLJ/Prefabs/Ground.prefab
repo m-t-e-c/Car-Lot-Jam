@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7836739a0024870ba84d552a9048bc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _renderer: {fileID: 2202518834888317654}
-  _occupyLayer:
+  myRenderer: {fileID: 2202518834888317654}
+  occupyLayer:
     serializedVersion: 2
     m_Bits: 448
 --- !u!65 &8071235352298714544

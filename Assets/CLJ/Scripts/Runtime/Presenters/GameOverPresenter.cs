@@ -1,11 +1,10 @@
-﻿using System;
-using CLJ.Runtime.Models;
+﻿using CLJ.Runtime.Models;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CLJ.Runtime.Views
+namespace CLJ.Runtime.Presenters
 {
     public class GameOverPresenter : MonoBehaviour
     {

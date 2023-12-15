@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CLJ
+namespace CLJ.Runtime
 {
     public class Locator
     {

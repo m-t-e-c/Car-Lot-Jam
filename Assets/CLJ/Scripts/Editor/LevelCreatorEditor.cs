@@ -35,16 +35,16 @@ namespace CLJ
             var grid = _levelCreator.GetGrid();
             if (
                 ReferenceEquals(grid, null) ||
-                ReferenceEquals(grid.Cells, null) ||
-                !grid.Width.Equals(_levelCreator.gridWidth) ||
-                !grid.Height.Equals(_levelCreator.gridHeight)
+                ReferenceEquals(grid.cells, null) ||
+                !grid.width.Equals(_levelCreator.gridWidth) ||
+                !grid.height.Equals(_levelCreator.gridHeight)
             )
             {
                 EditorGUILayout.HelpBox("Please regenerate the Grid!", MessageType.Error);
                 return;
             }
 
-            if (grid.Cells.Length.Equals(0))
+            if (grid.cells.Length.Equals(0))
             {
                 return;
             }
@@ -226,7 +226,7 @@ namespace CLJ
             GUIStyle style = new GUIStyle(GUI.skin.button);
             style.fontSize = 8;
             var grid = _levelCreator.GetGrid();
-            if (ReferenceEquals(grid, null) || grid.Cells.Length.Equals(0))
+            if (ReferenceEquals(grid, null) || grid.cells.Length.Equals(0))
             {
                 return;
             }

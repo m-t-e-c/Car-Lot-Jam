@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace CLJ.Runtime.Views
+namespace CLJ.Runtime.Presenters
 {
     public class GameplayPresenter : MonoBehaviour
     {

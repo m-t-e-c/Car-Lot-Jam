@@ -4,6 +4,27 @@ using UnityEngine;
 
 namespace CLJ.Runtime.Level
 {
+    public enum CellDirection
+    {
+        Left,
+        Right,
+        Up,
+        Down
+    }
+
+    public enum CellColor
+    {
+        None,
+        Purple,
+        Black,
+        Green,
+        Blue,
+        Orange,
+        Pink,
+        Red,
+        Yellow
+    }
+    
     [Serializable]
     public class GridCell
     {

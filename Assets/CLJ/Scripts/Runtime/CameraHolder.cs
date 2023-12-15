@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace CLJ.Runtime
 {
@@ -11,9 +10,9 @@ namespace CLJ.Runtime
 
     public class CameraHolder : MonoBehaviour
     {
-        [SerializeField] private Transform _otrhographicCameraTransform;
-        [SerializeField] private Transform _perspectiveCameraTransform;
-        [SerializeField] private float _orthographicSize;
+        [SerializeField] private Transform otrhographicCameraTransform;
+        [SerializeField] private Transform perspectiveCameraTransform;
+        [SerializeField] private float orthographicSize;
 
         private Camera _camera;
 
@@ -28,15 +27,15 @@ namespace CLJ.Runtime
             if (cameraType.Equals(CameraType.Perspective))
             {
                 _camera.orthographic = false;
-                cameraTransform.position = _perspectiveCameraTransform.position;
-                cameraTransform.rotation = _perspectiveCameraTransform.rotation;
+                cameraTransform.position = perspectiveCameraTransform.position;
+                cameraTransform.rotation = perspectiveCameraTransform.rotation;
             }
             else if (cameraType.Equals(CameraType.Orthographic))
             {
                 _camera.orthographic = true;
-                _camera.orthographicSize = _orthographicSize;
-                cameraTransform.position = _otrhographicCameraTransform.position;
-                cameraTransform.rotation = _otrhographicCameraTransform.rotation;
+                _camera.orthographicSize = orthographicSize;
+                cameraTransform.position = otrhographicCameraTransform.position;
+                cameraTransform.rotation = otrhographicCameraTransform.rotation;
             }
         }
     }

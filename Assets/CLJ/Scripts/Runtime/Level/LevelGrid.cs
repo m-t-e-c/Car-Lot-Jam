@@ -5,15 +5,15 @@ namespace CLJ.Runtime.Level
     [Serializable]
     public class LevelGrid
     {
-        public int Width;
-        public int Height;
-        public GridCell[,] Cells;
+        public int width;
+        public int height;
+        public GridCell[,] cells;
 
         public LevelGrid(int width, int height)
         {
-            Width = width;
-            Height = height;
-            Cells = new GridCell[width, height];
+            this.width = width;
+            this.height = height;
+            cells = new GridCell[width, height];
         }
     }
 }

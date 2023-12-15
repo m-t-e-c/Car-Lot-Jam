@@ -5,13 +5,13 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Object = UnityEngine.Object;
 
-namespace CLJ.Managers.ViewManager
+namespace CLJ.Runtime.Managers.ViewManager
 {
     public class ViewManager : IViewManager
     {
-        readonly Dictionary<Type, GameObject> viewInstances = new Dictionary<Type, GameObject>();
-
         public event Action<Component> OnViewLoaded;
+
+        readonly Dictionary<Type, GameObject> viewInstances = new Dictionary<Type, GameObject>();
 
         public T GetView<T>() where T : Component
         {

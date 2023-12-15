@@ -1,57 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using CLJ.Managers.LevelManager;
 using CLJ.Runtime.Utils;
 using CLJ.ScriptableObjects;
-using Newtonsoft.Json;
 using UnityEngine;
 
 namespace CLJ.Runtime.Level
 {
-    #region GridObject Enums
-
-    public enum CellDirection
-    {
-        Left,
-        Right,
-        Up,
-        Down
-    }
-
-    public enum CellColor
-    {
-        None,
-        Purple,
-        Black,
-        Green,
-        Blue,
-        Orange,
-        Pink,
-        Red,
-        Yellow
-    }
-
-    public enum GridObjectType
-    {
-        None,
-        SmallCar,
-        LongCar,
-        Stickman,
-        Cone,
-        Barrier
-    }
-
-    #endregion
-
     public class LevelCreator : MonoBehaviour
     {
         [HideInInspector] public int gridWidth;
         [HideInInspector] public int gridHeight;
         [HideInInspector] public CellDirection selectedCellDirection;
         [HideInInspector] public CellColor selectedCellColor;
+        
         public GridObjectsGroup gridObjectsGroup;
-
         private LevelGrid _levelGrid;
         private GridObject _objectToPlace;
 
@@ -74,18 +36,18 @@ namespace CLJ.Runtime.Level
 
         public GridCell GetCell(int x, int y)
         {
-            var cell = _levelGrid.Cells[x, y];
+            var cell = _levelGrid.cells[x, y];
             if (ReferenceEquals(cell, null))
             {
-                _levelGrid.Cells[x, y] = new GridCell();
+                _levelGrid.cells[x, y] = new GridCell();
             }
 
-            return _levelGrid.Cells[x, y];
+            return _levelGrid.cells[x, y];
         }
 
         public void GridButtonAction(int x, int y)
         {
-            var cell = _levelGrid.Cells[x, y];
+            var cell = _levelGrid.cells[x, y];
             if (_objectToPlace == null)
             {
                 if (cell.gridObject == null)
@@ -97,18 +59,6 @@ namespace CLJ.Runtime.Level
             {
                 PlaceSelectedObjectToGrid(x, y);
             }
-        }
-
-        public void ClearCell(int x, int y)
-        {
-            var cell = _levelGrid.Cells[x, y];
-            foreach (var linkedCellCoordinate in cell.linkedCellCoordinates)
-            {
-                var linkedCell = _levelGrid.Cells[linkedCellCoordinate.x, linkedCellCoordinate.y];
-                linkedCell.ResetCell();
-            }
-
-            cell.ResetCell();
         }
 
         public void SetObjectToPlace(GridObject gridObject)
@@ -125,8 +75,25 @@ namespace CLJ.Runtime.Level
         {
             selectedCellColor = cellColor;
         }
+
+        public void SaveGrid(int levelIndex)
+        {
+            LevelSaveSystem.SaveGrid(_levelGrid, levelIndex);
+        }
+
+        public void LoadGrid(int levelIndex)
+        {
+            var levelGrid = LevelSaveSystem.LoadLevel(levelIndex);
+            _levelGrid = new LevelGrid(levelGrid.width, levelGrid.height)
+            {
+                cells = levelGrid.cells
+            };
+
+            gridWidth = _levelGrid.width;
+            gridHeight = _levelGrid.height;
+        }
         
-        public void PlaceSelectedObjectToGrid(int x, int y)
+        private void PlaceSelectedObjectToGrid(int x, int y)
         {
             var gridSpace = _objectToPlace.gridSpace;
 
@@ -168,22 +135,17 @@ namespace CLJ.Runtime.Level
                 cell.linkedCellCoordinates = linkedCellCoordinates.Where(c => c != coord).ToList();
             }
         }
-
-        public void SaveGrid(int levelIndex)
+        
+        private void ClearCell(int x, int y)
         {
-            LevelSaveSystem.SaveGrid(_levelGrid, levelIndex);
-        }
-
-        public void LoadGrid(int levelIndex)
-        {
-            var levelGrid = LevelSaveSystem.LoadLevel(levelIndex);
-            _levelGrid = new LevelGrid(levelGrid.Width, levelGrid.Height)
+            var cell = _levelGrid.cells[x, y];
+            foreach (var linkedCellCoordinate in cell.linkedCellCoordinates)
             {
-                Cells = levelGrid.Cells
-            };
+                var linkedCell = _levelGrid.cells[linkedCellCoordinate.x, linkedCellCoordinate.y];
+                linkedCell.ResetCell();
+            }
 
-            gridWidth = _levelGrid.Width;
-            gridHeight = _levelGrid.Height;
+            cell.ResetCell();
         }
 
         private int GetDeltaX()

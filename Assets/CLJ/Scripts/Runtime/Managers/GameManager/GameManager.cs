@@ -1,5 +1,5 @@
-﻿using CLJ.Managers.ViewManager;
-using CLJ.Runtime.Views;
+﻿using CLJ.Runtime.Managers.ViewManager;
+using CLJ.Runtime.Presenters;
 using UnityEngine;
 
 namespace CLJ.Runtime.Managers.GameManager
@@ -7,15 +7,14 @@ namespace CLJ.Runtime.Managers.GameManager
     public class GameManager : MonoBehaviour
     {
         private IViewManager _viewManager;
-
         private int _spawnedCarCount;
 
         private void Start()
         {
             _viewManager = Locator.Instance.Resolve<IViewManager>();
             
-            GameEvents.OnCarSpawned += OnCarSpawned;
-            GameEvents.OnCarPassedThroughTheGate += OnCarPassedThroughTheGate;
+            GameEvents.onCarSpawned += OnCarSpawned;
+            GameEvents.onCarPassedThroughTheGate += OnCarPassedThroughTheGate;
         }
 
         private void OnCarSpawned()
@@ -36,8 +35,8 @@ namespace CLJ.Runtime.Managers.GameManager
 
         private void OnDisable()
         {
-            GameEvents.OnCarSpawned -= OnCarSpawned;
-            GameEvents.OnCarPassedThroughTheGate -= OnCarPassedThroughTheGate;
+            GameEvents.onCarSpawned -= OnCarSpawned;
+            GameEvents.onCarPassedThroughTheGate -= OnCarPassedThroughTheGate;
         }
     }
 }

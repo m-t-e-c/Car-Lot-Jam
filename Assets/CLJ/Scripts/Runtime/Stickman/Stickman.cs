@@ -18,7 +18,7 @@ namespace CLJ.Runtime
         [SerializeField] private ParticleSystem happyEmojiVFX;
         [SerializeField] private GridObjectColorSetter gridObjectColorSetter;
         [SerializeField] private Outline outline;
-        [SerializeField] private float moveSpeed = 5f;
+        [SerializeField] private float moveSpeed;
 
         private Pathfinder _pathfinder;
         private Vector2Int _gridPosition;
@@ -28,7 +28,7 @@ namespace CLJ.Runtime
 
         public void Init(Pathfinder pathfinder, Vector2Int position, CellColor color)
         {
-            this._pathfinder = pathfinder;
+            _pathfinder = pathfinder;
             _gridPosition = position;
             _cellColor = color;
             gridObjectColorSetter.SetColor(_cellColor);
@@ -64,13 +64,7 @@ namespace CLJ.Runtime
         {
             return _cellColor;
         }
-
-        public void ChangeMovingState(bool state)
-        {
-            IsMoving = state;
-            animator.SetBool(IsMovingHash, state);
-        }
-
+        
         public bool MoveTo(Vector2Int targetPosition, Action onMoveComplete = null)
         {
             List<Vector2Int> path = _pathfinder.FindPath(_gridPosition, targetPosition);
@@ -82,6 +76,12 @@ namespace CLJ.Runtime
             _gridPosition = targetPosition;
             StartCoroutine(FollowPath(path, onMoveComplete));
             return true;
+        }
+
+        private void ChangeMovingState(bool state)
+        {
+            IsMoving = state;
+            animator.SetBool(IsMovingHash, state);
         }
 
         private IEnumerator FollowPath(List<Vector2Int> path, Action onMoveComplete)

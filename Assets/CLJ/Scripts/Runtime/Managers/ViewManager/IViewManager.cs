@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace CLJ.Managers.ViewManager
+namespace CLJ.Runtime.Managers.ViewManager
 {
     public interface IViewManager
     {

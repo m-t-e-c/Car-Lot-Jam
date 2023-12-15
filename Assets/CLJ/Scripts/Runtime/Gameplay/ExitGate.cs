@@ -1,15 +1,12 @@
-﻿using System;
-using DG.Tweening;
+﻿using DG.Tweening;
 using UnityEngine;
 
 namespace CLJ.Runtime
 {
     public class ExitGate : MonoBehaviour
     {
-        
         [SerializeField] private ParticleSystem confettiVFX;
         [SerializeField] private GameObject barrier;
-        
         private Sequence _raiseSequence;
         private float _elapsedTime;
 
@@ -32,7 +29,7 @@ namespace CLJ.Runtime
             if (other.TryGetComponent(out Car car))
             {
                 RaiseBarrier();
-                GameEvents.OnCarPassedThroughTheGate?.Invoke();
+                GameEvents.onCarPassedThroughTheGate?.Invoke();
             }            
         }
     }

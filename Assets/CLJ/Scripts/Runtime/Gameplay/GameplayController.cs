@@ -11,7 +11,6 @@ namespace CLJ.Runtime
         private Camera _mainCamera;
         private Stickman _currentStickman;
         private Car _currentCar;
-        
         private bool _currentStickmanEnteringCar;
 
         private void Start()

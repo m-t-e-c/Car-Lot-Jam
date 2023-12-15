@@ -1,4 +1,4 @@
-﻿using CLJ.Managers.LevelManager;
+﻿using CLJ.Runtime.Managers.LevelManager;
 
 namespace CLJ.Runtime.Models
 {

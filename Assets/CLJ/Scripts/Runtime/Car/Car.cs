@@ -37,7 +37,7 @@ namespace CLJ.Runtime
 
         private void Start()
         {
-            GameEvents.OnCarSpawned?.Invoke();
+            GameEvents.onCarSpawned?.Invoke();
         }
 
         public void Init(CellColor color, Pathfinder pathfinder, Vector2Int gridPosition, CellDirection direction, List<Vector2Int> aroundCells)

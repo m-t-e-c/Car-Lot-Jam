@@ -4,7 +4,7 @@ namespace CLJ.Runtime
 {
     public static class GameEvents
     {
-        public static Action OnCarSpawned;
-        public static Action OnCarPassedThroughTheGate;
+        public static Action onCarSpawned;
+        public static Action onCarPassedThroughTheGate;
     }
 }
