@@ -35,6 +35,11 @@ namespace CLJ.Runtime
         private bool _isReadyToGo;
         private bool _isMoving;
 
+        private void Start()
+        {
+            GameEvents.OnCarSpawned?.Invoke();
+        }
+
         public void Init(CellColor color, Pathfinder pathfinder, Vector2Int gridPosition, CellDirection direction, List<Vector2Int> aroundCells)
         {
             _aroundCells = aroundCells;

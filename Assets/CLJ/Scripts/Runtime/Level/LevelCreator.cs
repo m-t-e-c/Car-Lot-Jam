@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CLJ.Managers.LevelManager;
+using CLJ.Runtime.Utils;
 using CLJ.ScriptableObjects;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -169,13 +171,12 @@ namespace CLJ.Runtime.Level
 
         public void SaveGrid(int levelIndex)
         {
-            string json = JsonConvert.SerializeObject(_levelGrid);
-            System.IO.File.WriteAllText(Application.dataPath + $"/CLJ/LevelData/LevelGrid{levelIndex}.json", json);
+            LevelSaveSystem.SaveGrid(_levelGrid, levelIndex);
         }
 
         public void LoadGrid(int levelIndex)
         {
-            var levelGrid = LoadLevel(levelIndex);
+            var levelGrid = LevelSaveSystem.LoadLevel(levelIndex);
             _levelGrid = new LevelGrid(levelGrid.Width, levelGrid.Height)
             {
                 Cells = levelGrid.Cells
@@ -265,13 +266,6 @@ namespace CLJ.Runtime.Level
                     cell.SetCell(_objectToPlace, selectedCellDirection, selectedCellColor);
                 }
             }
-        }
-
-        public static LevelGrid LoadLevel(int levelIndex)
-        {
-            var json =
-                System.IO.File.ReadAllText(Application.dataPath + $"/CLJ/LevelData/LevelGrid{levelIndex}.json");
-            return JsonConvert.DeserializeObject<LevelGrid>(json);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CLJ.Managers.LevelManager;
 using CLJ.Runtime.AStar;
 using Cysharp.Threading.Tasks;
@@ -10,7 +11,6 @@ namespace CLJ.Runtime.Level
     public class LevelGenerator : MonoBehaviour
     {
         private readonly Dictionary<Vector2Int, GameObject> _spawnedGridCells = new();
-
         private ILevelManager _levelManager;
         private LevelGrid _levelGrid;
         private Pathfinder _gridPath;
@@ -18,19 +18,27 @@ namespace CLJ.Runtime.Level
         private CameraHolder _cameraHolder;
         private Vector2Int[,] _path;
 
-        public async void Start()
+        public void Start()
         {
             _levelManager = Locator.Instance.Resolve<ILevelManager>();
-            _levelGrid = _levelManager.GetLevelGrid();
+            _levelManager.OnLevelLoad += OnLoadLevel;
+        }
 
-            _cameraHolder = Locator.Instance.Resolve<CameraHolder>();
-            _cameraHolder.SetCamera(_levelGrid.Height >= 6 ? CameraType.Orthographic : CameraType.Perspective);
+        private async void OnLoadLevel(LevelGrid levelGrid)
+        {
+            _levelGrid = levelGrid;
 
+            InitializeCamera();
             InitializePath();
-
             await SpawnGround();
             await SpawnRoads();
             SpawnObjects();
+        }
+        
+        private void InitializeCamera()
+        {
+            _cameraHolder = Locator.Instance.Resolve<CameraHolder>();
+            _cameraHolder.Init(_levelGrid.Height >= 6 ? CameraType.Orthographic : CameraType.Perspective);
         }
 
         private void InitializePath()
@@ -227,6 +235,11 @@ namespace CLJ.Runtime.Level
             }
 
             return sumPositions / cellCoords.Count;
+        }
+
+        private void OnDisable()
+        {
+            _levelManager.OnLevelLoad -= OnLoadLevel;
         }
     }
 }

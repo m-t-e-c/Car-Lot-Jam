@@ -1,19 +1,50 @@
-﻿using CLJ.Runtime.Level;
+﻿using System;
+using CLJ.Runtime.Level;
+using CLJ.Runtime.Utils;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace CLJ.Managers.LevelManager
 {
     public class LevelManager : ILevelManager
     {
-        private int _levelIndex;
+        public event Action<LevelGrid> OnLevelLoad;
         
-        public LevelManager(int levelIndex)
+        private int _currentLevelIndex;
+        
+        private const string CURRENT_LEVEL_INDEX_KEY = "current_level_index";
+
+        public LevelManager()
         {
-            _levelIndex = levelIndex;
+            _currentLevelIndex = PlayerPrefs.GetInt(CURRENT_LEVEL_INDEX_KEY,1);
         }
         
-        public LevelGrid GetLevelGrid()
+        public void LoadCurrentLevel()
         {
-            return LevelCreator.LoadLevel(_levelIndex);
+            var level = LevelSaveSystem.LoadLevel(_currentLevelIndex);
+            OnLevelLoad?.Invoke(level);
+        }
+
+        public void NextLevel()
+        {
+            _currentLevelIndex++;
+            if (!LevelSaveSystem.IsLevelExists(_currentLevelIndex))
+            {
+                _currentLevelIndex = 1;
+            }
+            
+            PlayerPrefs.SetInt(CURRENT_LEVEL_INDEX_KEY, _currentLevelIndex);
+           RestartLevel();
+        }
+
+        public void RestartLevel()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        public int GetCurrentLevelIndex()
+        {
+            return _currentLevelIndex;
         }
     }
 }

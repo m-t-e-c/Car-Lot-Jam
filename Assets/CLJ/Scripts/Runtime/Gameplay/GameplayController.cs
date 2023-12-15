@@ -11,6 +11,8 @@ namespace CLJ.Runtime
         private Camera _mainCamera;
         private Stickman _currentStickman;
         private Car _currentCar;
+        
+        private bool _currentStickmanEnteringCar;
 
         private void Start()
         {
@@ -57,17 +59,17 @@ namespace CLJ.Runtime
 
         private void SelectStickman(Stickman stickman)
         {
-            if (_currentStickman != null)
-            {
-                _currentStickman.CancelSelection();
-            }
+            if (_currentStickmanEnteringCar)
+                return;
+            
+            _currentStickman?.CancelSelection();
             _currentStickman = stickman;
             _currentStickman.SetSelected();
         }
 
         private void HandleGroundClick(Ground ground)
         {
-            if (_currentStickman == null) return;
+            if (ReferenceEquals(_currentStickman, null)) return;
 
             Vector2Int groundCoord = ground.GetCoordinates();
             bool hasPath = _currentStickman.MoveTo(groundCoord, OnStickmanReachedGround);
@@ -88,12 +90,13 @@ namespace CLJ.Runtime
 
         private void HandleCarClick(Car car)
         {
-            if (_currentStickman == null || !_currentStickman.GetColor().Equals(car.GetColor())) return;
+            if (ReferenceEquals(_currentStickman, null) || !_currentStickman.GetColor().Equals(car.GetColor())) return;
 
             foreach (Vector2Int carAroundCoord in car.GetAroundCells())
             {
                 if (_currentStickman.MoveTo(carAroundCoord, OnStickmanReachedCar))
                 {
+                    _currentStickmanEnteringCar = true;
                     _currentCar = car;
                     _currentStickman.PlayHappyEmoji();
                     car.Highlight(true);
@@ -127,6 +130,7 @@ namespace CLJ.Runtime
                 _currentCar.SetReady();
                 _currentStickman.CancelSelection();
                 _currentStickman = null;
+                _currentStickmanEnteringCar = false;
             });
         }
 

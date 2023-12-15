@@ -22,7 +22,7 @@ namespace CLJ.Runtime
             _camera = Camera.main;
         }
 
-        public void SetCamera(CameraType cameraType)
+        public void Init(CameraType cameraType)
         {
             var cameraTransform = _camera.transform;
             if (cameraType.Equals(CameraType.Perspective))

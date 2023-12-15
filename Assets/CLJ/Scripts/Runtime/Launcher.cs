@@ -1,6 +1,6 @@
-﻿using System;
-using CLJ.Managers.ViewManager;
+﻿using CLJ.Managers.ViewManager;
 using CLJ.Managers.LevelManager;
+using CLJ.Runtime.Views;
 using UnityEngine;
 
 namespace CLJ.Runtime
@@ -11,18 +11,34 @@ namespace CLJ.Runtime
         
         private ILevelManager _levelManager;
         private IViewManager _viewManager;
-        
-        [SerializeField] private int _levelIndex = 1;
 
         private void Awake()
         {
-            _levelManager = new LevelManager(_levelIndex);
+            RegisterManagers();
+            RegisterMonoReferences();
+        }
+
+        private void RegisterManagers()
+        {
+            _levelManager = new LevelManager();
             Locator.Instance.Register<ILevelManager>(_levelManager);
             
             _viewManager = new ViewManager();
             Locator.Instance.Register<IViewManager>(_viewManager);
-            
+        }
+
+
+        private void RegisterMonoReferences()
+        {
             Locator.Instance.Register<CameraHolder>(cameraHolder);
+        }
+        
+        private void Start()
+        {
+            _viewManager.LoadView<GameplayPresenter>((view) =>
+            {
+                _levelManager.LoadCurrentLevel();
+            });
         }
     }
 }
