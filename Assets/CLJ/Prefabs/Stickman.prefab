@@ -63,13 +63,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67de9f508ad345e6a3161af3f0369fd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animator: {fileID: 647118084420114923}
-  _angerEmojiVFX: {fileID: 8349753312111583908}
-  _happyEmojiVFX: {fileID: 9097476266175254186}
+  animator: {fileID: 647118084420114923}
+  angerEmojiVFX: {fileID: 8349753312111583908}
+  happyEmojiVFX: {fileID: 9097476266175254186}
   gridObjectColorSetter: {fileID: 821432971560254100}
-  _outline: {fileID: 5188932674873870616}
-  _moveSpeed: 4
-  isMoving: 0
+  outline: {fileID: 5188932674873870616}
+  moveSpeed: 5
 --- !u!114 &821432971560254100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,9 +81,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60a2da48736c4305a173fd486fcb0e52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _renderers:
+  renderers:
   - {fileID: 7766287099469649662}
-  _colorMaterials:
+  colorMaterials:
   - {fileID: 2100000, guid: 793a522c8da431242891ec4c6ae73612, type: 2}
   - {fileID: 2100000, guid: e26e6e6fe742a704997ff89195e34c02, type: 2}
   - {fileID: 2100000, guid: 0960c98f60f8986448cfebd8e959a532, type: 2}

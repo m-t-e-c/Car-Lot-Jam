@@ -123,15 +123,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 660cf90034014a80a446fcb28c0404d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animator: {fileID: 8256030626177243799}
-  _leftDoorEnterTransform: {fileID: 4698645675572162442}
-  _rightDoorEnterTransform: {fileID: 1002834857199107573}
-  _seatTransform: {fileID: 4838488977399256306}
-  _carBody: {fileID: 8803081305848933885}
-  _gridObjectColorSetter: {fileID: 1588036666535474190}
-  _smokeParticles: {fileID: 4919391757463579339}
-  _outline: {fileID: -9192544024928951541}
-  _moveBlockLayers:
+  animator: {fileID: 8256030626177243799}
+  leftDoorEnterTransform: {fileID: 4698645675572162442}
+  rightDoorEnterTransform: {fileID: 1002834857199107573}
+  seatTransform: {fileID: 4838488977399256306}
+  carBody: {fileID: 8803081305848933885}
+  gridObjectColorSetter: {fileID: 1588036666535474190}
+  smokeParticles: {fileID: 4919391757463579339}
+  outline: {fileID: -9192544024928951541}
+  moveBlockLayers:
     serializedVersion: 2
     m_Bits: 448
 --- !u!114 &1588036666535474190
@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60a2da48736c4305a173fd486fcb0e52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _renderers:
+  renderers:
   - {fileID: 3156423045484785737}
   - {fileID: 1295209568917953280}
   - {fileID: 4077285719321657234}
@@ -154,7 +154,7 @@ MonoBehaviour:
   - {fileID: 341153264948920153}
   - {fileID: 6554296151798791460}
   - {fileID: 5192195856196696609}
-  _colorMaterials:
+  colorMaterials:
   - {fileID: 2100000, guid: 793a522c8da431242891ec4c6ae73612, type: 2}
   - {fileID: 2100000, guid: e26e6e6fe742a704997ff89195e34c02, type: 2}
   - {fileID: 2100000, guid: 0960c98f60f8986448cfebd8e959a532, type: 2}

@@ -2,7 +2,6 @@
 using CLJ.Managers.LevelManager;
 using CLJ.Runtime.AStar;
 using Cysharp.Threading.Tasks;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -10,15 +9,14 @@ namespace CLJ.Runtime.Level
 {
     public class LevelGenerator : MonoBehaviour
     {
-        readonly Dictionary<Vector2Int, GameObject> _spawnedGridCells = new();
+        private readonly Dictionary<Vector2Int, GameObject> _spawnedGridCells = new();
 
         private ILevelManager _levelManager;
         private LevelGrid _levelGrid;
         private Pathfinder _gridPath;
         private Pathfinder _roadPath;
         private CameraHolder _cameraHolder;
-
-        public Vector2Int[,] _path;
+        private Vector2Int[,] _path;
 
         public async void Start()
         {
@@ -35,13 +33,12 @@ namespace CLJ.Runtime.Level
             SpawnObjects();
         }
 
-        void InitializePath()
+        private void InitializePath()
         {
-            var pathWidth = _levelGrid.Width + 2;
-            var pathHeight = _levelGrid.Height + 2;
+            int pathWidth = _levelGrid.Width + 2;
+            int pathHeight = _levelGrid.Height + 2;
 
             _path = new Vector2Int[pathWidth, pathHeight];
-
             for (int y = 0; y < pathHeight; y++)
             {
                 for (int x = 0; x < pathWidth; x++)
@@ -53,13 +50,12 @@ namespace CLJ.Runtime.Level
             _roadPath = new Pathfinder(_path);
         }
 
-        async UniTask<GameObject> GetObjectFromAddressable(string key)
+        private async UniTask<GameObject> GetObjectFromAddressable(string key)
         {
-            var result = await Addressables.LoadAssetAsync<GameObject>(key);
-            return result;
+            return await Addressables.LoadAssetAsync<GameObject>(key).Task;
         }
 
-        async UniTask SpawnGround()
+        private async UniTask SpawnGround()
         {
             _gridPath = new Pathfinder(_levelGrid);
 
@@ -68,54 +64,33 @@ namespace CLJ.Runtime.Level
             {
                 for (int x = 0; x < _levelGrid.Width; x++)
                 {
-                    var ground = await GetObjectFromAddressable("Ground");
-                    var groundGo = Instantiate(ground, new Vector3(x, 0, -y), Quaternion.identity);
-                    var node = _gridPath.GetNode(new Vector2Int(x, y));
-
+                    GameObject groundPrefab = await GetObjectFromAddressable("Ground");
+                    Vector3 spawnPosition = new Vector3(x, 0, -y);
+                    GameObject groundGo = Instantiate(groundPrefab, spawnPosition, Quaternion.identity,
+                        gridParent.transform);
+                    Node node = _gridPath.GetNode(new Vector2Int(x, y));
                     groundGo.GetComponent<Ground>().SetNode(node);
-                    groundGo.transform.GetChild(1).GetComponent<TextMeshPro>().SetText($"{x},{y}");
-                    groundGo.transform.parent = gridParent.transform;
-
                     _spawnedGridCells.Add(new Vector2Int(x, y), groundGo);
                 }
             }
         }
 
-        public List<Vector2Int> GetNeighborCoordinates(Vector2Int targetCoord, List<Vector2Int> linkedCells,
+        private List<Vector2Int> GetNeighborCoordinates(Vector2Int targetCoord, List<Vector2Int> linkedCells,
             CellDirection cellDirection)
         {
             List<Vector2Int> neighbours = new List<Vector2Int>();
-            List<Vector2Int> directions = new List<Vector2Int>();
+            Vector2Int[] directions = cellDirection switch
+            {
+                CellDirection.Up or CellDirection.Down => new[] { Vector2Int.left, Vector2Int.right },
+                CellDirection.Left or CellDirection.Right => new[] { Vector2Int.up, Vector2Int.down },
+                _ => new Vector2Int[0]
+            };
 
-            if (cellDirection == CellDirection.Up)
+            foreach (Vector2Int direction in directions)
             {
-                directions.Add(Vector2Int.left);
-                directions.Add(Vector2Int.right);
-            }
-            else if (cellDirection == CellDirection.Down)
-            {
-                directions.Add(Vector2Int.left);
-                directions.Add(Vector2Int.right);
-            }
-            else if (cellDirection == CellDirection.Left)
-            {
-                directions.Add(Vector2Int.up);
-                directions.Add(Vector2Int.down);
-            }
-            else if (cellDirection == CellDirection.Right)
-            {
-                directions.Add(Vector2Int.up);
-                directions.Add(Vector2Int.down);
-            }
-
-            foreach (var direction in directions)
-            {
-                var neighbourCoord = targetCoord + direction;
-                if (IsWithinGrid(neighbourCoord))
+                Vector2Int neighbourCoord = targetCoord + direction;
+                if (IsWithinGrid(neighbourCoord) && !linkedCells.Contains(neighbourCoord))
                 {
-                    if (linkedCells.Contains(neighbourCoord))
-                        continue;
-
                     neighbours.Add(neighbourCoord);
                 }
             }
@@ -123,140 +98,127 @@ namespace CLJ.Runtime.Level
             return neighbours;
         }
 
-        bool IsWithinGrid(Vector2Int coordinate)
+        private bool IsWithinGrid(Vector2Int coordinate)
         {
             return coordinate.x >= 0 && coordinate.x < _levelGrid.Width && coordinate.y >= 0 &&
                    coordinate.y < _levelGrid.Height;
         }
 
-
-        async void SpawnObjects()
+        private async void SpawnObjects()
         {
-            GameObject levelObjects = new GameObject("LevelObjects");
+            GameObject levelObjectsParent = new GameObject("LevelObjects");
             for (int y = 0; y < _levelGrid.Height; y++)
             {
                 for (int x = 0; x < _levelGrid.Width; x++)
                 {
-                    var cell = _levelGrid.Cells[x, y];
-                    if (cell == null || cell.gridObject == null || cell.isSpawned)
-                        continue;
+                    GridCell cell = _levelGrid.Cells[x, y];
+                    if (cell == null || cell.gridObject == null || cell.isSpawned) continue;
 
                     cell.linkedCellCoordinates.Add(new Vector2Int(x, y));
+                    Vector3 middlePosition = GetCenterOfCells(cell.linkedCellCoordinates);
+                    Quaternion rotation = GetObjectDirection(cell.cellDirection);
+                    GameObject gridObjectPrefab =
+                        await GetObjectFromAddressable(cell.gridObject.gridObjectType.ToString());
+                    GameObject obj = Instantiate(gridObjectPrefab, middlePosition, rotation,
+                        levelObjectsParent.transform);
 
-                    var middlePosition = GetCenterOfCells(cell.linkedCellCoordinates);
-                    var rotation = GetObjectDirection(cell.cellDirection);
-                    var gridObject = await GetObjectFromAddressable(cell.gridObject.gridObjectType.ToString());
-                    var obj = Instantiate(gridObject, middlePosition, rotation);
-
-                    obj.transform.parent = levelObjects.transform;
-
-                    if (obj.TryGetComponent(out Stickman stickman))
-                    {
-                        stickman.Init(_gridPath, new Vector2Int(x, y), cell.cellColor);
-                    }
-                    else if (obj.TryGetComponent(out Car car))
-                    {
-                        var neighborCoordinates = GetNeighborCoordinates(new Vector2Int(x, y),
-                            cell.linkedCellCoordinates, cell.cellDirection);
-                        car.Init(cell.cellColor, _roadPath, new Vector2Int(x, y), cell.cellDirection,
-                            neighborCoordinates);
-                    }
-
+                    InitializeGameObject(obj, cell, new Vector2Int(x, y));
                     SetLinkedCellsSpawned(cell.linkedCellCoordinates);
                 }
             }
         }
 
-        async UniTask SpawnRoads()
+        private void InitializeGameObject(GameObject obj, GridCell cell, Vector2Int cellPosition)
+        {
+            if (obj.TryGetComponent(out Stickman stickman))
+            {
+                stickman.Init(_gridPath, cellPosition, cell.cellColor);
+            }
+            else if (obj.TryGetComponent(out Car car))
+            {
+                List<Vector2Int> neighborCoordinates =
+                    GetNeighborCoordinates(cellPosition, cell.linkedCellCoordinates, cell.cellDirection);
+                car.Init(cell.cellColor, _roadPath, cellPosition, cell.cellDirection, neighborCoordinates);
+            }
+        }
+
+        private async UniTask SpawnRoads()
         {
             GameObject roadsParent = new GameObject("Roads");
+            await InstantiateRoads(roadsParent);
+        }
 
-            var straightRoad = await GetObjectFromAddressable("StraightRoad");
-            var tRoad = await GetObjectFromAddressable("TRoad");
-            var cornerRoad = await GetObjectFromAddressable("CornerRoad");
+        private async UniTask InstantiateRoads(GameObject roadsParent)
+        {
+            GameObject straightRoadPrefab = await GetObjectFromAddressable("StraightRoad");
+            GameObject tRoadPrefab = await GetObjectFromAddressable("TRoad");
+            GameObject cornerRoadPrefab = await GetObjectFromAddressable("CornerRoad");
 
-            // Spawn Upper and Lower Roads
             for (int i = 0; i < _levelGrid.Width; i++)
             {
                 Vector3 topPosition = new Vector3(i, 0, 1);
                 Vector3 bottomPosition = new Vector3(i, 0, -_levelGrid.Height);
                 Quaternion rotation = Quaternion.Euler(0, 90, 0);
-                var road1 = Instantiate(straightRoad, topPosition, rotation);
-                var road2 = Instantiate(straightRoad, bottomPosition, rotation);
-
-                road1.transform.parent = roadsParent.transform;
-                road2.transform.parent = roadsParent.transform;
+                Instantiate(straightRoadPrefab, topPosition, rotation, roadsParent.transform);
+                Instantiate(straightRoadPrefab, bottomPosition, rotation, roadsParent.transform);
             }
 
-            // Spawn Right and Left Roads
             for (int i = 0; i < _levelGrid.Height; i++)
             {
-                Vector3 rightPos = new Vector3(_levelGrid.Width, 0, -i);
-                Vector3 leftPos = new Vector3(-1, 0, -i);
-                var road1 = Instantiate(straightRoad, rightPos, Quaternion.identity);
-                var road2 = Instantiate(straightRoad, leftPos, Quaternion.identity);
-
-                road1.transform.parent = roadsParent.transform;
-                road2.transform.parent = roadsParent.transform;
+                Vector3 rightPosition = new Vector3(_levelGrid.Width, 0, -i);
+                Vector3 leftPosition = new Vector3(-1, 0, -i);
+                Instantiate(straightRoadPrefab, rightPosition, Quaternion.identity, roadsParent.transform);
+                Instantiate(straightRoadPrefab, leftPosition, Quaternion.identity, roadsParent.transform);
             }
-
 
             Vector3 topLeftPosition = new Vector3(-1, 0, 1);
             Vector3 topRightPosition = new Vector3(_levelGrid.Width, 0, 1);
             Vector3 bottomRightPosition = new Vector3(_levelGrid.Width, 0, -_levelGrid.Height);
             Vector3 bottomLeftPosition = new Vector3(-1, 0, -_levelGrid.Height);
 
-            var topRightCornerRoad = Instantiate(cornerRoad, topRightPosition, Quaternion.Euler(0, 90, 0));
-            var bottomLeftCornerRoad = Instantiate(cornerRoad, bottomLeftPosition, Quaternion.Euler(0, 270, 0));
-            var bottomRightCornerRoad = Instantiate(cornerRoad, bottomRightPosition, Quaternion.Euler(0, 180, 0));
-
-            topRightCornerRoad.transform.parent = roadsParent.transform;
-            bottomLeftCornerRoad.transform.parent = roadsParent.transform;
-            bottomRightCornerRoad.transform.parent = roadsParent.transform;
-
-
-            var tRoadGo = Instantiate(tRoad, topLeftPosition, Quaternion.Euler(0, 0, 0));
-            tRoadGo.transform.parent = roadsParent.transform;
+            Instantiate(cornerRoadPrefab, topRightPosition, Quaternion.Euler(0, 90, 0), roadsParent.transform);
+            Instantiate(cornerRoadPrefab, bottomLeftPosition, Quaternion.Euler(0, 270, 0), roadsParent.transform);
+            Instantiate(cornerRoadPrefab, bottomRightPosition, Quaternion.Euler(0, 180, 0), roadsParent.transform);
+            Instantiate(tRoadPrefab, topLeftPosition, Quaternion.identity, roadsParent.transform);
 
             for (int i = 1; i < 30; i++)
             {
                 if (i == 4)
                 {
-                    var exitGate = await GetObjectFromAddressable("ExitGate");
-                    var exitPosition = topLeftPosition + i * Vector3.forward + Vector3.left;
-                    Instantiate(exitGate, exitPosition, Quaternion.identity);
+                    GameObject exitGatePrefab = await GetObjectFromAddressable("ExitGate");
+                    Vector3 exitPosition = topLeftPosition + i * Vector3.forward + Vector3.left;
+                    Instantiate(exitGatePrefab, exitPosition, Quaternion.identity, roadsParent.transform);
                 }
 
-                var roadPosition = topLeftPosition + i * Vector3.forward;
-                var road = Instantiate(straightRoad, roadPosition, Quaternion.Euler(0, 0, 0));
-                road.transform.parent = roadsParent.transform;
+                Vector3 roadPosition = topLeftPosition + i * Vector3.forward;
+                Instantiate(straightRoadPrefab, roadPosition, Quaternion.identity, roadsParent.transform);
             }
         }
 
-        void SetLinkedCellsSpawned(List<Vector2Int> linkedCells)
+        private void SetLinkedCellsSpawned(List<Vector2Int> linkedCells)
         {
             foreach (Vector2Int coordinate in linkedCells)
             {
-                var linkedCell = _levelGrid.Cells[coordinate.x, coordinate.y];
+                GridCell linkedCell = _levelGrid.Cells[coordinate.x, coordinate.y];
                 linkedCell.isSpawned = true;
             }
         }
 
-        Quaternion GetObjectDirection(CellDirection direction)
+        private Quaternion GetObjectDirection(CellDirection direction)
         {
-            var rotation =
-                direction == CellDirection.Down ? Quaternion.Euler(0, 180, 0) :
-                direction == CellDirection.Left ? Quaternion.Euler(0, 270, 0) :
-                direction == CellDirection.Right ? Quaternion.Euler(0, 90, 0) :
-                Quaternion.identity;
-
-            return rotation;
+            return direction switch
+            {
+                CellDirection.Down => Quaternion.Euler(0, 180, 0),
+                CellDirection.Left => Quaternion.Euler(0, 270, 0),
+                CellDirection.Right => Quaternion.Euler(0, 90, 0),
+                _ => Quaternion.identity
+            };
         }
 
-        Vector3 GetCenterOfCells(List<Vector2Int> cellCoords)
+        private Vector3 GetCenterOfCells(List<Vector2Int> cellCoords)
         {
             Vector3 sumPositions = Vector3.zero;
-            foreach (var coord in cellCoords)
+            foreach (Vector2Int coord in cellCoords)
             {
                 if (_spawnedGridCells.TryGetValue(coord, out GameObject cell))
                 {

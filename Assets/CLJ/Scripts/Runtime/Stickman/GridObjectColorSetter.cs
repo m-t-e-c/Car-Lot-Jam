@@ -5,14 +5,14 @@ namespace CLJ.Runtime
 {
     public class GridObjectColorSetter : MonoBehaviour
     {
-        [SerializeField] private Renderer[] _renderers;
-        [SerializeField] private Material[] _colorMaterials;
+        [SerializeField] private Renderer[] renderers;
+        [SerializeField] private Material[] colorMaterials;
         
         public void SetColor(CellColor cellColor)
         {
-            foreach (Renderer renderer in _renderers)
+            foreach (Renderer rnd in renderers)
             {
-                renderer.sharedMaterial = _colorMaterials[(int)cellColor -1];
+                rnd.sharedMaterial = colorMaterials[(int)cellColor -1];
             }
         }
     }

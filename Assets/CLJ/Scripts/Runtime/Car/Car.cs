@@ -3,30 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using CLJ.Runtime.AStar;
 using CLJ.Runtime.Level;
-using DG.Tweening;
 using UnityEngine;
+using DG.Tweening;
 
 namespace CLJ.Runtime
 {
     public class Car : MonoBehaviour
     {
-        #region Animation Hashes
-        private static readonly int OpenDoor = Animator.StringToHash("OpenDoor");
-        private static readonly int DoorIndex = Animator.StringToHash("DoorIndex");
-        #endregion
+        private static readonly int OpenDoorHash = Animator.StringToHash("OpenDoor");
+        private static readonly int DoorIndexHash = Animator.StringToHash("DoorIndex");
 
         [Header("Animation References")]
-        [SerializeField] private Animator _animator;
-        [SerializeField] private Transform _leftDoorEnterTransform;
-        [SerializeField] private Transform _rightDoorEnterTransform;
-        [SerializeField] private Transform _seatTransform;
-        [SerializeField] private Transform _carBody;
+        [SerializeField] private Animator animator;
+        [SerializeField] private Transform leftDoorEnterTransform;
+        [SerializeField] private Transform rightDoorEnterTransform;
+        [SerializeField] private Transform seatTransform;
+        [SerializeField] private Transform carBody;
 
         [Header("Other References")]
-        [SerializeField] private GridObjectColorSetter _gridObjectColorSetter;
-        [SerializeField] private GameObject _smokeParticles;
-        [SerializeField] private Outline _outline;
-        [SerializeField] private LayerMask _moveBlockLayers;
+        [SerializeField] private GridObjectColorSetter gridObjectColorSetter;
+        [SerializeField] private GameObject smokeParticles;
+        [SerializeField] private Outline outline;
+        [SerializeField] private LayerMask moveBlockLayers;
 
         private CellColor _cellColor;
         private Vector2Int _gridPosition;
@@ -44,12 +42,22 @@ namespace CLJ.Runtime
             _gridPosition = gridPosition;
             _pathfinder = pathfinder;
             _cellColor = color;
-            _gridObjectColorSetter.SetColor(_cellColor);
+            gridObjectColorSetter.SetColor(_cellColor);
         }
         
         public CellDirection GetDirection()
         {
             return _direction;
+        }
+        
+        public Vector3 GetSeatPosition()
+        {
+            return seatTransform.position;
+        }
+        
+        public List<Vector2Int> GetAroundCells()
+        {
+            return _aroundCells;
         }
         
         public CellColor GetColor()
@@ -59,50 +67,40 @@ namespace CLJ.Runtime
 
         public Vector3 GetDoorPosition(bool isLeft)
         {
-            return isLeft ? _leftDoorEnterTransform.position : _rightDoorEnterTransform.position;
+            return isLeft ? leftDoorEnterTransform.position : rightDoorEnterTransform.position;
         }
 
-        public Vector3 GetSeatPosition()
+        public void Highlight(bool highlightStatus)
         {
-            return _seatTransform.position;
-        }
-        
-        public List<Vector2Int> GetAroundCells()
-        {
-            return _aroundCells;
-        }
-        
-        public void Highlight()
-        {
-            _outline.enabled = true;
+            outline.enabled = highlightStatus;
         }
 
         public void SetReady()
         {
-            _outline.enabled = false;
+            Highlight(false);
             _isReadyToGo = true;
         }
 
         private void FixedUpdate()
         {
-            if (_isMoving)
+            if (_isMoving || !_isReadyToGo)
                 return;
 
-            if (_isReadyToGo)
+            CheckAndExitRoad();
+        }
+
+        private void CheckAndExitRoad()
+        {
+            Ray ray = new Ray(transform.position + Vector3.up * 0.5f, transform.forward);
+            bool isBlockedFront = Physics.Raycast(ray.origin, ray.direction, 10, moveBlockLayers);
+            bool isBlockedBack = Physics.Raycast(ray.origin, -ray.direction, 10, moveBlockLayers);
+
+            if (isBlockedFront && !isBlockedBack)
             {
-                Ray ray = new Ray(transform.position + Vector3.up * 0.5f, transform.forward);
-                Physics.Raycast(ray.origin, ray.direction, out RaycastHit frontHit, 10,_moveBlockLayers);
-                if (frontHit.collider)
-                {
-                    Physics.Raycast(ray.origin, -ray.direction, out RaycastHit backHit, 10,_moveBlockLayers);
-                    if (!backHit.collider)
-                    {
-                        ExitToRoad(false);
-                        return;
-                    }
-                    return;
-                }
-                
+                ExitToRoad(false);
+            }
+            else if (!isBlockedFront)
+            {
                 ExitToRoad(true);
             }
         }
@@ -110,139 +108,100 @@ namespace CLJ.Runtime
         public void ExitToRoad(bool forward)
         {
             _isMoving = true;
-            _smokeParticles.SetActive(true);
+            smokeParticles.SetActive(true);
 
-            var (key, target) = GetExitGridPosition(forward);
-          
+            var (exitKey, exitTarget) = GetExitGridPosition(forward);
             PlayAccelerateAnimation(forward);
-            transform.DOMove(new Vector3(target.x,0,target.y), 1f)
-                .OnComplete(() =>
-                {
-                   
-                    _gridPosition = key;
-                    MoveTo(new Vector2Int(0, -28));
-                });
+            MoveCar(exitTarget, exitKey);
+        }
+
+        private void MoveCar(Vector2Int target, Vector2Int key)
+        {
+            Vector3 targetPosition = new Vector3(target.x, 0, target.y);
+            transform.DOMove(targetPosition, 1f).OnComplete(() =>
+            {
+                _gridPosition = key;
+                MoveTo(_pathfinder.GetLastNode().Coordinate);
+            });
         }
 
         public (Vector2Int, Vector2Int) GetExitGridPosition(bool forward)
         {
             Vector2Int key = Vector2Int.zero;
             Vector2Int target = Vector2Int.zero;
-            if (_direction == CellDirection.Right)
+
+            switch (_direction)
             {
-                if (forward)
-                {
-                    var pathXMax = _pathfinder.GetPathWidth();
-                    key = new Vector2Int(pathXMax, _gridPosition.y + 1);
-                    target = _pathfinder.GetNode(key).Position;
-                }
-                else
-                {
-                    key = new Vector2Int(0, _gridPosition.y + 1);
-                    target = _pathfinder.GetNode(key).Position;
-                }
+                case CellDirection.Right:
+                    key = new Vector2Int(forward ? _pathfinder.GetPathWidth() : 0, _gridPosition.y + 1);
+                    break;
+                case CellDirection.Left:
+                    key = new Vector2Int(forward ? 0 : _pathfinder.GetPathWidth(), _gridPosition.y + 1);
+                    break;
+                case CellDirection.Up:
+                    key = new Vector2Int(_gridPosition.x + 1, forward ? 0 : _pathfinder.GetPathHeight());
+                    break;
+                case CellDirection.Down:
+                    key = new Vector2Int(_gridPosition.x + 1, forward ? _pathfinder.GetPathHeight() : 0);
+                    break;
             }
-            else if (_direction == CellDirection.Left)
-            {
-                if (forward)
-                {
-                    key = new Vector2Int(0, _gridPosition.y + 1);
-                    target = _pathfinder.GetNode(key).Position;
-                }
-                else
-                {
-                    var pathXMax = _pathfinder.GetPathWidth();
-                    key = new Vector2Int(pathXMax, _gridPosition.y + 1);
-                    target = _pathfinder.GetNode(key).Position;
-                }
-            }
-            else if (_direction == CellDirection.Up)
-            {
-                if (forward)
-                {
-                    key = new Vector2Int(_gridPosition.x + 1,0);
-                    target = _pathfinder.GetNode(key).Position;
-                }
-                else
-                {
-                    var pathYMax =_pathfinder.GetPathHeight();
-                    key = new Vector2Int(_gridPosition.x + 1, pathYMax);
-                    target = _pathfinder.GetNode(key).Position;
-                }
-            }
-            else if (_direction == CellDirection.Down)
-            {
-                if (forward)
-                {
-                    var pathYMax =_pathfinder.GetPathHeight();
-                    key = new Vector2Int(_gridPosition.x + 1, pathYMax);
-                    target = _pathfinder.GetNode(key).Position;
-                }
-                else
-                {
-                    key = new Vector2Int(_gridPosition.x + 1,0);
-                    target = _pathfinder.GetNode(key).Position;
-                }
-            }
-            
+
+            target = _pathfinder.GetNode(key).Position;
             return (key, target);
         }
-        
+
         public void MoveTo(Vector2Int targetPosition, Action onMoveComplete = null)
         {
             List<Vector2Int> path = _pathfinder.FindPath(_gridPosition, targetPosition);
-
-            if (path == null || path.Count == 0)
-            {
-                return;
-            }
+            if (path == null || path.Count == 0) return;
 
             _gridPosition = targetPosition;
             StartCoroutine(FollowPath(path, onMoveComplete));
         }
-        
-        private IEnumerator FollowPath(List<Vector2Int> path, Action onMoveComplete = null)
+
+        private IEnumerator FollowPath(List<Vector2Int> path, Action onMoveComplete)
         {
             foreach (var point in path)
             {
-                Vector3 startPosition = transform.position;
-                Vector3 endPosition = new Vector3(point.x, 0, point.y);
-                float journeyLength = Vector3.Distance(startPosition, endPosition);
-                float startTime = Time.time;
-
-                while (transform.position != endPosition)
-                {
-                    float distCovered = (Time.time - startTime) * 5;
-                    float fractionOfJourney = distCovered / journeyLength;
-                    transform.rotation = Quaternion.Lerp(transform.rotation,
-                        Quaternion.LookRotation(endPosition - startPosition), Time.deltaTime * 10f);
-                    transform.position = Vector3.Lerp(startPosition, endPosition, fractionOfJourney);
-                    yield return null;
-                }
+                yield return MoveToPoint(point);
             }
-
             onMoveComplete?.Invoke();
         }
-        
-        #region Animation Methods
-        public void PlayOpenDoorAnimation(bool isLeft)
+
+        private IEnumerator MoveToPoint(Vector2Int point)
         {
-            _animator.SetInteger(DoorIndex, isLeft ? -1 : 1);
-            _animator.SetBool(OpenDoor, true);
-        }
-        
-        public void PlayCloseDoorAnimation()
-        {
-            _animator.SetBool(OpenDoor, false);
-        }
-        
-        public void PlayAccelerateAnimation(bool forward)
-        {
-            _carBody
-                .DOLocalRotate(new Vector3(forward ? -10f : 10f, 0f,0f ), 0.25f)
-                .SetLoops(2, LoopType.Yoyo);
+            Vector3 startPosition = transform.position;
+            Vector3 endPosition = new Vector3(point.x, 0, point.y);
+            float journeyLength = Vector3.Distance(startPosition, endPosition);
+            float startTime = Time.time;
+
+            while (transform.position != endPosition)
+            {
+                float distCovered = (Time.time - startTime) * 5;
+                float fractionOfJourney = distCovered / journeyLength;
+                transform.rotation = Quaternion.Lerp(transform.rotation,
+                    Quaternion.LookRotation(endPosition - startPosition), Time.deltaTime * 10f);
+                transform.position = Vector3.Lerp(startPosition, endPosition, fractionOfJourney);
+                yield return null;
+            }
         }
 
-        #endregion
+        public void PlayOpenDoorAnimation(bool isLeft)
+        {
+            animator.SetInteger(DoorIndexHash, isLeft ? -1 : 1);
+            animator.SetBool(OpenDoorHash, true);
+        }
+
+        public void PlayCloseDoorAnimation()
+        {
+            animator.SetBool(OpenDoorHash, false);
+        }
+
+        public void PlayAccelerateAnimation(bool forward)
+        {
+            carBody
+                .DOLocalRotate(new Vector3(forward ? -10f : 10f, 0f, 0f), 0.25f)
+                .SetLoops(2, LoopType.Yoyo);
+        }
     }
 }

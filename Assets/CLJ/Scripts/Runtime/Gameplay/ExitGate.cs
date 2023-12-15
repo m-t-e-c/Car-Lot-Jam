@@ -5,25 +5,24 @@ namespace CLJ.Runtime
 {
     public class ExitGate : MonoBehaviour
     {
-        [SerializeField] private ParticleSystem _confettiVFX;
-        [SerializeField] private GameObject _barrier;
+        [SerializeField] private ParticleSystem confettiVFX;
+        [SerializeField] private GameObject barrier;
         
+        private Sequence _raiseSequence;
         private float _elapsedTime;
 
-        private Sequence _raiseSequence;
-
-        public void RaiseBarrier()
+        private void RaiseBarrier()
         {
             _raiseSequence?.Kill();
             _raiseSequence = DOTween.Sequence();
             
             _raiseSequence
-                .Append(_barrier.transform.DORotate(new Vector3(0, 0, 60f), 0.25f)
+                .Append(barrier.transform.DORotate(new Vector3(0, 0, 60f), 0.25f)
                     .OnComplete(() =>
                     {
-                        _confettiVFX.Play();
+                        confettiVFX.Play();
                     }))
-                .Append(_barrier.transform.DORotate(new Vector3(0, 0, 0), 0.25f).SetDelay(2f));
+                .Append(barrier.transform.DORotate(new Vector3(0, 0, 0), 0.25f).SetDelay(2f));
         }
         
         private void OnTriggerEnter(Collider other)

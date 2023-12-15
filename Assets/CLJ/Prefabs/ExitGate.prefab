@@ -77,8 +77,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1bccb32573a463cb717d78457ed4b02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _confettiVFX: {fileID: 4447639884373719529}
-  _barrier: {fileID: 8568558185979934185}
+  confettiVFX: {fileID: 4447639884373719529}
+  barrier: {fileID: 8568558185979934185}
 --- !u!1001 &4447639884388841225
 PrefabInstance:
   m_ObjectHideFlags: 0
