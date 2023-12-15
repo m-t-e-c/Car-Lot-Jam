@@ -196,7 +196,7 @@ namespace CLJ.Runtime
                 float distCovered = (Time.time - startTime) * 5;
                 float fractionOfJourney = distCovered / journeyLength;
                 transform.rotation = Quaternion.Lerp(transform.rotation,
-                    Quaternion.LookRotation(endPosition - startPosition), Time.deltaTime * 10f);
+                    Quaternion.LookRotation(endPosition - startPosition), Time.deltaTime * 20f);
                 transform.position = Vector3.Lerp(startPosition, endPosition, fractionOfJourney);
                 yield return null;
             }
