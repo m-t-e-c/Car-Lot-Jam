@@ -87,12 +87,6 @@ namespace CLJ.Runtime
         {
             if (ReferenceEquals(_stickman, null) || !_stickman.GetColor().Equals(car.GetColor())) return;
 
-            if (car.GetAroundCells().Count.Equals(0))
-            {
-                _stickman.PlayAngerEmoji();
-                return;
-            }
-
             foreach (Vector2Int carAroundCoord in car.GetAroundCells())
             {
                 if (_stickman.MoveTo(carAroundCoord, OnStickmanReachedCar))
@@ -102,6 +96,8 @@ namespace CLJ.Runtime
                     car.Highlight();
                     break;
                 }
+
+                _stickman.PlayAngerEmoji();
             }
         }
 
@@ -117,27 +113,27 @@ namespace CLJ.Runtime
             doorPosition = new Vector3(doorPosition.x, 0, doorPosition.z);
 
             _stickman.transform.parent = _car.transform;
+            _stickman.transform.rotation = _car.transform.rotation;
+            _stickman.gameObject.layer = LayerMask.NameToLayer("Default");
 
-            sequence
-                .Append(_stickman.transform.DOMove(doorPosition, 1f))
-                .Append(_stickman.transform.DOMove(seatPosition, 1f))
-                .Join(_stickman.transform.DORotate(seatPosition, 0.5f))
-                .Join(_stickman.transform.DOScale(0.5f, 1f)
-                    .OnComplete(() =>
-                    {
-                        _car.PlayCloseDoorAnimation();
-                        _car.SetReady();
-                    }));
 
-            _stickman.CancelSelection();
-            _stickman = null;
+            sequence.Append(_stickman.transform.DOMove(doorPosition, 1f));
+            sequence.Append(_stickman.transform.DOMove(seatPosition, 1f));
+            sequence.AppendCallback(() => { _car.PlayCloseDoorAnimation(); });
+            sequence.Join(_stickman.transform.DOScale(0.5f, 0.5f));
+            sequence.OnComplete(() =>
+            {
+                _car.SetReady();
+                _stickman.CancelSelection();
+                _stickman = null;
+            });
         }
-        
+
         private bool IsStickmanLeftFromCar()
         {
             var carDirection = _car.GetDirection();
             bool isLeft = false;
-            
+
             if (carDirection == CellDirection.Right)
             {
                 isLeft = _stickman.transform.position.z > _car.transform.position.z;
@@ -149,13 +145,12 @@ namespace CLJ.Runtime
             else if (carDirection == CellDirection.Up)
             {
                 isLeft = _stickman.transform.position.x < _car.transform.position.x;
-
             }
             else if (carDirection == CellDirection.Down)
             {
                 isLeft = _stickman.transform.position.x > _car.transform.position.x;
             }
-            
+
             return isLeft;
         }
     }

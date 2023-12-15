@@ -91,51 +91,101 @@ namespace CLJ.Runtime
             if (_isReadyToGo)
             {
                 Ray ray = new Ray(transform.position + Vector3.up * 0.5f, transform.forward);
-                Debug.DrawRay(ray.origin, ray.direction * 50, Color.magenta);
-                Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 50f,_moveBlockLayers);
-                if (hit.collider)
+                Physics.Raycast(ray.origin, ray.direction, out RaycastHit frontHit, 10,_moveBlockLayers);
+                if (frontHit.collider)
+                {
+                    Physics.Raycast(ray.origin, -ray.direction, out RaycastHit backHit, 10,_moveBlockLayers);
+                    if (!backHit.collider)
+                    {
+                        ExitToRoad(false);
+                        return;
+                    }
                     return;
+                }
                 
-                ExitToRoad();
+                ExitToRoad(true);
             }
         }
 
-        public void ExitToRoad()
+        public void ExitToRoad(bool forward)
         {
             _isMoving = true;
             _smokeParticles.SetActive(true);
+
+            var (key, target) = GetExitGridPosition(forward);
+          
+            PlayAccelerateAnimation(forward);
+            transform.DOMove(new Vector3(target.x,0,target.y), 1f)
+                .OnComplete(() =>
+                {
+                   
+                    _gridPosition = key;
+                    MoveTo(new Vector2Int(0, -28));
+                });
+        }
+
+        public (Vector2Int, Vector2Int) GetExitGridPosition(bool forward)
+        {
             Vector2Int key = Vector2Int.zero;
             Vector2Int target = Vector2Int.zero;
             if (_direction == CellDirection.Right)
             {
-                var pathXMax = _pathfinder.GetPathWidth();
-                key = new Vector2Int(pathXMax, _gridPosition.y + 1);
-                target = _pathfinder.GetNode(key).Position;
+                if (forward)
+                {
+                    var pathXMax = _pathfinder.GetPathWidth();
+                    key = new Vector2Int(pathXMax, _gridPosition.y + 1);
+                    target = _pathfinder.GetNode(key).Position;
+                }
+                else
+                {
+                    key = new Vector2Int(0, _gridPosition.y + 1);
+                    target = _pathfinder.GetNode(key).Position;
+                }
             }
             else if (_direction == CellDirection.Left)
             {
-                key = new Vector2Int(0, _gridPosition.y + 1);
-                target = _pathfinder.GetNode(key).Position;
-
+                if (forward)
+                {
+                    key = new Vector2Int(0, _gridPosition.y + 1);
+                    target = _pathfinder.GetNode(key).Position;
+                }
+                else
+                {
+                    var pathXMax = _pathfinder.GetPathWidth();
+                    key = new Vector2Int(pathXMax, _gridPosition.y + 1);
+                    target = _pathfinder.GetNode(key).Position;
+                }
             }
             else if (_direction == CellDirection.Up)
             {
-                key = new Vector2Int(_gridPosition.x + 1,0);
-                target = _pathfinder.GetNode(key).Position;
+                if (forward)
+                {
+                    key = new Vector2Int(_gridPosition.x + 1,0);
+                    target = _pathfinder.GetNode(key).Position;
+                }
+                else
+                {
+                    var pathYMax =_pathfinder.GetPathHeight();
+                    key = new Vector2Int(_gridPosition.x + 1, pathYMax);
+                    target = _pathfinder.GetNode(key).Position;
+                }
             }
             else if (_direction == CellDirection.Down)
             {
-                var pathYMax =_pathfinder.GetPathHeight();
-                key = new Vector2Int(_gridPosition.x + 1, pathYMax);
-                target = _pathfinder.GetNode(key).Position;
-            }
-          
-            transform.DOMove(new Vector3(target.x,0,target.y), 1f)
-                .OnComplete(() =>
+                if (forward)
                 {
-                    _gridPosition = key;
-                    MoveTo(new Vector2Int(0, -28));
-                });
+                    var pathYMax =_pathfinder.GetPathHeight();
+                    key = new Vector2Int(_gridPosition.x + 1, pathYMax);
+                    target = _pathfinder.GetNode(key).Position;
+                }
+                else
+                {
+                    key = new Vector2Int(_gridPosition.x + 1,0);
+                    target = _pathfinder.GetNode(key).Position;
+                }
+            }
+            
+            return (key, target);
         }
         
         public void MoveTo(Vector2Int targetPosition, Action onMoveComplete = null)
@@ -186,10 +236,10 @@ namespace CLJ.Runtime
             _animator.SetBool(OpenDoor, false);
         }
         
-        public void PlayAccelerateAnimation()
+        public void PlayAccelerateAnimation(bool forward)
         {
             _carBody
-                .DOLocalRotate(new Vector3(-15f, 0f,0f ), 0.5f)
+                .DOLocalRotate(new Vector3(forward ? -10f : 10f, 0f,0f ), 0.25f)
                 .SetLoops(2, LoopType.Yoyo);
         }
 
