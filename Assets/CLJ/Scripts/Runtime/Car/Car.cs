@@ -60,7 +60,7 @@ namespace CLJ.Runtime
             return seatTransform.position;
         }
         
-        public List<Vector2Int> GetAroundCells()
+        public List<Vector2Int> GetEnterCells()
         {
             return _aroundCells;
         }
@@ -85,6 +85,17 @@ namespace CLJ.Runtime
             Highlight(false);
             _isReadyToGo = true;
         }
+        
+        public void PlayOpenDoorAnimation(bool isLeft)
+        {
+            animator.SetInteger(DoorIndexHash, isLeft ? -1 : 1);
+            animator.SetBool(OpenDoorHash, true);
+        }
+
+        public void PlayCloseDoorAnimation()
+        {
+            animator.SetBool(OpenDoorHash, false);
+        }
 
         private void FixedUpdate()
         {
@@ -96,7 +107,8 @@ namespace CLJ.Runtime
 
         private void CheckAndExitRoad()
         {
-            Ray ray = new Ray(transform.position + Vector3.up * 0.5f, transform.forward);
+            var myTransform = transform;
+            Ray ray = new Ray(myTransform.position + Vector3.up * 0.5f, myTransform.forward);
             bool isBlockedFront = Physics.Raycast(ray.origin, ray.direction, 10, moveBlockLayers);
             bool isBlockedBack = Physics.Raycast(ray.origin, -ray.direction, 10, moveBlockLayers);
 
@@ -110,7 +122,7 @@ namespace CLJ.Runtime
             }
         }
 
-        public void ExitToRoad(bool forward)
+        private void ExitToRoad(bool forward)
         {
             _isMoving = true;
             smokeParticles.SetActive(true);
@@ -130,10 +142,9 @@ namespace CLJ.Runtime
             });
         }
 
-        public (Vector2Int, Vector2Int) GetExitGridPosition(bool forward)
+        private (Vector2Int, Vector2Int) GetExitGridPosition(bool forward)
         {
             Vector2Int key = Vector2Int.zero;
-            Vector2Int target = Vector2Int.zero;
 
             switch (_direction)
             {
@@ -151,11 +162,11 @@ namespace CLJ.Runtime
                     break;
             }
 
-            target = _pathfinder.GetNode(key).Position;
+            var target = _pathfinder.GetNode(key).Position;
             return (key, target);
         }
 
-        public void MoveTo(Vector2Int targetPosition, Action onMoveComplete = null)
+        private void MoveTo(Vector2Int targetPosition, Action onMoveComplete = null)
         {
             List<Vector2Int> path = _pathfinder.FindPath(_gridPosition, targetPosition);
             if (path == null || path.Count == 0) return;
@@ -191,18 +202,7 @@ namespace CLJ.Runtime
             }
         }
 
-        public void PlayOpenDoorAnimation(bool isLeft)
-        {
-            animator.SetInteger(DoorIndexHash, isLeft ? -1 : 1);
-            animator.SetBool(OpenDoorHash, true);
-        }
-
-        public void PlayCloseDoorAnimation()
-        {
-            animator.SetBool(OpenDoorHash, false);
-        }
-
-        public void PlayAccelerateAnimation(bool forward)
+        private void PlayAccelerateAnimation(bool forward)
         {
             carBody
                 .DOLocalRotate(new Vector3(forward ? -10f : 10f, 0f, 0f), 0.25f)

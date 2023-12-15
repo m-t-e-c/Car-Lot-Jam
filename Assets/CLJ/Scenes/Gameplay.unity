@@ -550,7 +550,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OverrideLevel: 0
-  OverrideLevelIndex: 0
+  OverrideLevelIndex: 4
   cameraHolder: {fileID: 1360898244}
 --- !u!4 &1074731233
 Transform:

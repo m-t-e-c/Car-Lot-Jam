@@ -1,4 +1,6 @@
-﻿using CLJ.Runtime.Level;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CLJ.Runtime.Level;
 using DG.Tweening;
 using UnityEngine;
 
@@ -60,7 +62,7 @@ namespace CLJ.Runtime
         {
             if (_currentStickmanEnteringCar)
                 return;
-            
+
             _currentStickman?.CancelSelection();
             _currentStickman = stickman;
             _currentStickman.SetSelected();
@@ -71,7 +73,7 @@ namespace CLJ.Runtime
             if (ReferenceEquals(_currentStickman, null)) return;
 
             Vector2Int groundCoord = ground.GetCoordinates();
-            bool hasPath = _currentStickman.MoveTo(groundCoord, OnStickmanReachedGround);
+            bool hasPath = _currentStickman.MoveTo(groundCoord);
 
             if (!hasPath)
             {
@@ -81,29 +83,36 @@ namespace CLJ.Runtime
             ground.Highlight(hasPath);
         }
 
-        private void OnStickmanReachedGround()
-        {
-            _currentStickman.CancelSelection();
-            _currentStickman = null;
-        }
 
         private void HandleCarClick(Car car)
         {
             if (ReferenceEquals(_currentStickman, null) || !_currentStickman.GetColor().Equals(car.GetColor())) return;
 
-            foreach (Vector2Int carAroundCoord in car.GetAroundCells())
+            var enterCoordinates = car.GetEnterCells();
+            var sortedCoordinates = SortCoordinatesByDistance(_currentStickman.transform.position, enterCoordinates);
+
+            foreach (var coordinate in sortedCoordinates)
             {
-                if (_currentStickman.MoveTo(carAroundCoord, OnStickmanReachedCar))
+                if (_currentStickman.MoveTo(coordinate, OnStickmanReachedCar))
                 {
                     _currentStickmanEnteringCar = true;
                     _currentCar = car;
                     _currentStickman.PlayHappyEmoji();
                     car.Highlight(true);
-                    break;
+                    return;
                 }
             }
 
             _currentStickman.PlayAngerEmoji();
+        }
+
+        private IEnumerable<Vector2Int> SortCoordinatesByDistance(Vector3 characterPosition, List<Vector2Int> coordinates)
+        {
+            Vector2 characterPosition2D = new Vector3(characterPosition.x, 0, characterPosition.y);
+
+          var sortedCoordinates = coordinates
+                .OrderBy(point => Vector3.Distance(characterPosition2D, new Vector3(point.x, 0, point.y)));
+          return sortedCoordinates.Reverse();
         }
 
         private void OnStickmanReachedCar()
