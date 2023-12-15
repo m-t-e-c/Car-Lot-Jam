@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CLJ.Runtime.AStar;
 using CLJ.Runtime.Managers.LevelManager;
 using Cysharp.Threading.Tasks;
@@ -33,7 +35,7 @@ namespace CLJ.Runtime.Level
             await SpawnRoads();
             SpawnObjects();
         }
-        
+
         private void InitializeCamera()
         {
             _cameraHolder = Locator.Instance.Resolve<CameraHolder>();
@@ -82,23 +84,24 @@ namespace CLJ.Runtime.Level
             }
         }
 
-        private List<Vector2Int> GetNeighborCoordinates(Vector2Int targetCoord, List<Vector2Int> linkedCells,
-            CellDirection cellDirection)
+        private List<Vector2Int> GetNeighborCoordinates(List<Vector2Int> linkedCells, CellDirection cellDirection)
         {
-            List<Vector2Int> neighbours = new List<Vector2Int>();
-            Vector2Int[] directions = cellDirection switch
+            var neighbours = new List<Vector2Int>();
+            var directions = cellDirection switch
             {
                 CellDirection.Up or CellDirection.Down => new[] { Vector2Int.left, Vector2Int.right },
                 CellDirection.Left or CellDirection.Right => new[] { Vector2Int.up, Vector2Int.down },
-                _ => new Vector2Int[0]
+                _ => throw new ArgumentOutOfRangeException(nameof(cellDirection), cellDirection, null)
             };
-
-            foreach (Vector2Int direction in directions)
+            foreach (Vector2Int cell in linkedCells)
             {
-                Vector2Int neighbourCoord = targetCoord + direction;
-                if (IsWithinGrid(neighbourCoord) && !linkedCells.Contains(neighbourCoord))
+                foreach (Vector2Int direction in directions)
                 {
-                    neighbours.Add(neighbourCoord);
+                    Vector2Int neighbourCoord = cell + direction;
+                    if (IsWithinGrid(neighbourCoord) && !linkedCells.Contains(neighbourCoord))
+                    {
+                        neighbours.Add(neighbourCoord);
+                    }
                 }
             }
 
@@ -143,8 +146,7 @@ namespace CLJ.Runtime.Level
             }
             else if (obj.TryGetComponent(out Car car))
             {
-                List<Vector2Int> neighborCoordinates =
-                    GetNeighborCoordinates(cellPosition, cell.linkedCellCoordinates, cell.cellDirection);
+                List<Vector2Int> neighborCoordinates = GetNeighborCoordinates(cell.linkedCellCoordinates, cell.cellDirection);
                 car.Init(cell.cellColor, _roadPath, cellPosition, cell.cellDirection, neighborCoordinates);
             }
         }
