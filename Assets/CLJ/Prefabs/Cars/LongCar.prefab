@@ -134,6 +134,7 @@ MonoBehaviour:
   moveBlockLayers:
     serializedVersion: 2
     m_Bits: 448
+  moveSpeed: 8
 --- !u!114 &1588036666535474190
 MonoBehaviour:
   m_ObjectHideFlags: 0

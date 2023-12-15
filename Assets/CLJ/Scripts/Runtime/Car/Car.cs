@@ -13,18 +13,20 @@ namespace CLJ.Runtime
         private static readonly int OpenDoorHash = Animator.StringToHash("OpenDoor");
         private static readonly int DoorIndexHash = Animator.StringToHash("DoorIndex");
 
-        [Header("Animation References")]
-        [SerializeField] private Animator animator;
+        [Header("Animation References")] [SerializeField]
+        private Animator animator;
+
         [SerializeField] private Transform leftDoorEnterTransform;
         [SerializeField] private Transform rightDoorEnterTransform;
         [SerializeField] private Transform seatTransform;
         [SerializeField] private Transform carBody;
 
-        [Header("Other References")]
+        [Header("Other References")] 
         [SerializeField] private GridObjectColorSetter gridObjectColorSetter;
         [SerializeField] private GameObject smokeParticles;
         [SerializeField] private Outline outline;
         [SerializeField] private LayerMask moveBlockLayers;
+        [SerializeField] private float moveSpeed;
 
         private CellColor _cellColor;
         private Vector2Int _gridPosition;
@@ -40,7 +42,8 @@ namespace CLJ.Runtime
             GameEvents.onCarSpawned?.Invoke();
         }
 
-        public void Init(CellColor color, Pathfinder pathfinder, Vector2Int gridPosition, CellDirection direction, List<Vector2Int> aroundCells)
+        public void Init(CellColor color, Pathfinder pathfinder, Vector2Int gridPosition, CellDirection direction,
+            List<Vector2Int> aroundCells)
         {
             _aroundCells = aroundCells;
             _direction = direction;
@@ -49,22 +52,22 @@ namespace CLJ.Runtime
             _cellColor = color;
             gridObjectColorSetter.SetColor(_cellColor);
         }
-        
+
         public CellDirection GetDirection()
         {
             return _direction;
         }
-        
+
         public Vector3 GetSeatPosition()
         {
             return seatTransform.position;
         }
-        
+
         public List<Vector2Int> GetEnterCells()
         {
             return _aroundCells;
         }
-        
+
         public CellColor GetColor()
         {
             return _cellColor;
@@ -85,7 +88,7 @@ namespace CLJ.Runtime
             Highlight(false);
             _isReadyToGo = true;
         }
-        
+
         public void PlayOpenDoorAnimation(bool isLeft)
         {
             animator.SetInteger(DoorIndexHash, isLeft ? -1 : 1);
@@ -135,11 +138,12 @@ namespace CLJ.Runtime
         private void MoveCar(Vector2Int target, Vector2Int key)
         {
             Vector3 targetPosition = new Vector3(target.x, 0, target.y);
-            transform.DOMove(targetPosition, 1f).OnComplete(() =>
-            {
-                _gridPosition = key;
-                MoveTo(_pathfinder.GetLastNode().Coordinate);
-            });
+            transform.DOMove(targetPosition, 0.5f).OnComplete(() =>
+                {
+                    _gridPosition = key;
+                    MoveTo(_pathfinder.GetLastNode().Coordinate);
+                })
+                .SetEase(Ease.Linear);
         }
 
         private (Vector2Int, Vector2Int) GetExitGridPosition(bool forward)
@@ -181,6 +185,7 @@ namespace CLJ.Runtime
             {
                 yield return MoveToPoint(point);
             }
+
             onMoveComplete?.Invoke();
         }
 
@@ -193,7 +198,7 @@ namespace CLJ.Runtime
 
             while (transform.position != endPosition)
             {
-                float distCovered = (Time.time - startTime) * 5;
+                float distCovered = (Time.time - startTime) * moveSpeed;
                 float fractionOfJourney = distCovered / journeyLength;
                 transform.rotation = Quaternion.Lerp(transform.rotation,
                     Quaternion.LookRotation(endPosition - startPosition), Time.deltaTime * 20f);
