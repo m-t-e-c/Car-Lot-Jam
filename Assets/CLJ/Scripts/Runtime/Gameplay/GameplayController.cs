@@ -89,7 +89,7 @@ namespace CLJ.Runtime
             if (ReferenceEquals(_currentStickman, null) || !_currentStickman.GetColor().Equals(car.GetColor())) return;
 
             var enterCoordinates = car.GetEnterCells();
-            var sortedCoordinates = SortCoordinatesByDistance(_currentStickman.transform.position, enterCoordinates);
+            var sortedCoordinates = SortCoordinatesByDistance(_currentStickman.GetGridPosition(), enterCoordinates);
 
             foreach (var coordinate in sortedCoordinates)
             {
@@ -106,13 +106,18 @@ namespace CLJ.Runtime
             _currentStickman.PlayAngerEmoji();
         }
 
-        private IEnumerable<Vector2Int> SortCoordinatesByDistance(Vector3 characterPosition, List<Vector2Int> coordinates)
+        private IEnumerable<Vector2Int> SortCoordinatesByDistance(Vector2Int characterPosition, List<Vector2Int> coordinates)
         {
-            Vector2 characterPosition2D = new Vector3(characterPosition.x, 0, characterPosition.y);
+            var sortedCoordinates = coordinates.OrderBy(point =>
+                GetManhattanDistance(new Vector2Int(characterPosition.x,characterPosition.y), new Vector2Int(point.x, point.y)));
+            return sortedCoordinates;
+        }
 
-          var sortedCoordinates = coordinates
-                .OrderBy(point => Vector3.Distance(characterPosition2D, new Vector3(point.x, 0, point.y)));
-          return sortedCoordinates.Reverse();
+        private int GetManhattanDistance(Vector2Int positionA, Vector2Int positionB)
+        {
+            int distX = Mathf.Abs(positionA.x - positionB.x);
+            int distY = Mathf.Abs(positionA.y - positionB.y);
+            return distX + distY;
         }
 
         private void OnStickmanReachedCar()
@@ -125,8 +130,10 @@ namespace CLJ.Runtime
             Vector3 doorPosition = _currentCar.GetDoorPosition(isLeft);
             doorPosition.y = 0;
 
-            _currentStickman.transform.parent = _currentCar.transform;
-            _currentStickman.transform.rotation = _currentCar.transform.rotation;
+            var stickmanTransform = _currentStickman.transform;
+            var carTransform = _currentCar.transform;
+            stickmanTransform.parent = carTransform;
+            stickmanTransform.rotation = carTransform.rotation;
             _currentStickman.gameObject.layer = LayerMask.NameToLayer("Default");
 
             sequence.Append(_currentStickman.transform.DOMove(doorPosition, 1f));

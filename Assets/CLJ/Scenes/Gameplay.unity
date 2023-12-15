@@ -221,9 +221,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridWidth: 5
-  gridHeight: 5
-  selectedCellDirection: 2
-  selectedCellColor: 4
+  gridHeight: 6
+  selectedCellDirection: 0
+  selectedCellColor: 0
   gridObjectsGroup: {fileID: 11400000, guid: f004648adf224c44d9a0b4daed234fde, type: 2}
 --- !u!4 &140484642
 Transform:

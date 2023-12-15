@@ -60,6 +60,11 @@ namespace CLJ.Runtime
             animator.SetTrigger(EnterTheCarHash);
         }
 
+        public Vector2Int GetGridPosition()
+        {
+            return _gridPosition;
+        }
+
         public CellColor GetColor()
         {
             return _cellColor;
