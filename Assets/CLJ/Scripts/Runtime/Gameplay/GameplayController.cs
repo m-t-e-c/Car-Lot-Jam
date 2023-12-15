@@ -136,10 +136,10 @@ namespace CLJ.Runtime
             stickmanTransform.rotation = carTransform.rotation;
             _currentStickman.gameObject.layer = LayerMask.NameToLayer("Default");
 
-            sequence.Append(_currentStickman.transform.DOMove(doorPosition, 1f));
-            sequence.Append(_currentStickman.transform.DOMove(_currentCar.GetSeatPosition(), 1f));
+            sequence.Append(_currentStickman.transform.DOMove(doorPosition, 0.5f).SetEase(Ease.Linear));
+            sequence.Append(_currentStickman.transform.DOMove(_currentCar.GetSeatPosition(), 0.7f).SetEase(Ease.Linear));
             sequence.AppendCallback(() => _currentCar.PlayCloseDoorAnimation());
-            sequence.Join(_currentStickman.transform.DOScale(0.5f, 0.5f));
+            sequence.Join(_currentStickman.transform.DOScale(0.5f, 0.5f).SetEase(Ease.Linear));
             sequence.OnComplete(() =>
             {
                 _currentCar.SetReady();
