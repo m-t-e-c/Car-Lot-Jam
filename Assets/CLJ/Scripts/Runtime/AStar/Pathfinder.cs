@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CLJ.Runtime.Level;
 using UnityEngine;
@@ -63,7 +62,7 @@ namespace CLJ.Runtime.AStar
             return _nodes.Find(node => node.Coordinate.Equals(coordinate));
         }
         
-        public List<Vector2Int> FindPath(Vector2Int startCoordinate, Vector2Int targetCoordinate, Action<Vector2Int> onPathFailed = null)
+        public List<Vector2Int> FindPath(Vector2Int startCoordinate, Vector2Int targetCoordinate)
         {
             Node startNode = _nodes.Find(node => node.Coordinate.Equals(startCoordinate));
             Node targetNode = _nodes.Find(node => node.Coordinate.Equals(targetCoordinate));
@@ -77,7 +76,8 @@ namespace CLJ.Runtime.AStar
                 Node currentNode = openList[0];
                 for (int i = 1; i < openList.Count; i++)
                 {
-                    if (openList[i].FCost < currentNode.FCost || (openList[i].FCost == currentNode.FCost && openList[i].HCost < currentNode.HCost))
+                    if (openList[i].FCost < currentNode.FCost || openList[i].FCost == currentNode.FCost &&
+                        openList[i].HCost < currentNode.HCost)
                     {
                         currentNode = openList[i];
                     }
@@ -111,9 +111,6 @@ namespace CLJ.Runtime.AStar
                 }
             }
 
-            Node closestNodeToTarget = closedSet.OrderBy(n => GetDistance(n, targetNode)).FirstOrDefault();
-            Vector2Int closestCoordinate = closestNodeToTarget?.Coordinate ?? startCoordinate;
-            onPathFailed?.Invoke(closestCoordinate);
             return new List<Vector2Int>();
         }
 

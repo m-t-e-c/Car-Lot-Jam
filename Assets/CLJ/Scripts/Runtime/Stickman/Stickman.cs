@@ -78,7 +78,7 @@ namespace CLJ.Runtime
                 return true;
             }
             
-            List<Vector2Int> path = _pathfinder.FindPath(_gridPosition, targetPosition, onPathFailed);
+            List<Vector2Int> path = _pathfinder.FindPath(_gridPosition, targetPosition);
             if (path == null || path.Count == 0)
             {
                 return false;

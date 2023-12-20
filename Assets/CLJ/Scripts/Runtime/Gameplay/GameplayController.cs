@@ -82,14 +82,12 @@ namespace CLJ.Runtime
             Vector2Int groundCoord = ground.GetCoordinates();
             bool hasPath = _currentStickman.MoveTo(groundCoord, null, OnPathFailed);
 
-            if (hasPath)
-            {
-                ground.Highlight(true);
-            }
-            else
+            if (!hasPath)
             {
                 _currentStickman.PlayAngerEmoji();
             }
+            
+            ground.Highlight(hasPath);
             
             ResetStickman();
         }
