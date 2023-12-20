@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CLJ.Runtime.Level;
+using UnityEngine;
 
 namespace CLJ.Runtime
 {
@@ -6,6 +7,7 @@ namespace CLJ.Runtime
     {
         [SerializeField] private LayerMask interactionLayers;
 
+        private LevelGenerator _levelGenerator;
         private Camera _mainCamera;
         private Stickman _currentStickman;
         
@@ -13,6 +15,7 @@ namespace CLJ.Runtime
 
         private void Start()
         {
+            _levelGenerator = Locator.Instance.Resolve<LevelGenerator>();
             _mainCamera = Camera.main;
         }
 
@@ -77,15 +80,24 @@ namespace CLJ.Runtime
             }
             
             Vector2Int groundCoord = ground.GetCoordinates();
-            bool hasPath = _currentStickman.MoveTo(groundCoord);
+            bool hasPath = _currentStickman.MoveTo(groundCoord, null, OnPathFailed);
 
-            if (!hasPath)
+            if (hasPath)
+            {
+                ground.Highlight(true);
+            }
+            else
             {
                 _currentStickman.PlayAngerEmoji();
             }
             
-            ground.Highlight(hasPath);
             ResetStickman();
+        }
+
+        private void OnPathFailed(Vector2Int lastReachableNodeCoordinate)
+        {
+            var lastReachableGround = _levelGenerator.GetGroundByCoordinate(lastReachableNodeCoordinate);
+            lastReachableGround.Highlight(false);
         }
 
         private void HandleCarClick(Car car)

@@ -245,5 +245,10 @@ namespace CLJ.Runtime.Level
         {
             _levelManager.OnLevelLoad -= OnLoadLevel;
         }
+        
+        public Ground GetGroundByCoordinate(Vector2Int coordinate)
+        {
+            return _spawnedGridCells[coordinate].GetComponent<Ground>();
+        }
     }
 }

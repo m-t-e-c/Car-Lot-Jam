@@ -70,9 +70,9 @@ namespace CLJ.Runtime
             return _cellColor;
         }
         
-        public bool MoveTo(Vector2Int targetPosition, Action onMoveComplete = null)
+        public bool MoveTo(Vector2Int targetPosition, Action onMoveComplete = null, Action<Vector2Int> onPathFailed = null)
         {
-            List<Vector2Int> path = _pathfinder.FindPath(_gridPosition, targetPosition);
+            List<Vector2Int> path = _pathfinder.FindPath(_gridPosition, targetPosition, onPathFailed);
             if (path == null || path.Count == 0)
             {
                 return false;

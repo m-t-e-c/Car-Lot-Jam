@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CLJ.Runtime.Level;
 using UnityEngine;
@@ -62,7 +63,7 @@ namespace CLJ.Runtime.AStar
             return _nodes.Find(node => node.Coordinate.Equals(coordinate));
         }
         
-        public List<Vector2Int> FindPath(Vector2Int startCoordinate, Vector2Int targetCoordinate)
+        public List<Vector2Int> FindPath(Vector2Int startCoordinate, Vector2Int targetCoordinate, Action<Vector2Int> onPathFailed = null)
         {
             Node startNode = _nodes.Find(node => node.Coordinate.Equals(startCoordinate));
             Node targetNode = _nodes.Find(node => node.Coordinate.Equals(targetCoordinate));
@@ -111,6 +112,7 @@ namespace CLJ.Runtime.AStar
                 }
             }
 
+            onPathFailed?.Invoke(closedSet.LastOrDefault()!.Coordinate);
             return new List<Vector2Int>();
         }
 

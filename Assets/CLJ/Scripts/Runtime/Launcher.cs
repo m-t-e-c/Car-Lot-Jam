@@ -1,4 +1,5 @@
-﻿using CLJ.Runtime.Managers.LevelManager;
+﻿using CLJ.Runtime.Level;
+using CLJ.Runtime.Managers.LevelManager;
 using CLJ.Runtime.Managers.ViewManager;
 using CLJ.Runtime.Presenters;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace CLJ.Runtime
         public int OverrideLevelIndex = 0; // For testing purposes
         
         [SerializeField] private CameraHolder cameraHolder;
+        [SerializeField] private LevelGenerator levelGenerator;
         
         private ILevelManager _levelManager;
         private IViewManager _viewManager;
@@ -33,6 +35,7 @@ namespace CLJ.Runtime
         private void RegisterMonoReferences()
         {
             Locator.Instance.Register<CameraHolder>(cameraHolder);
+            Locator.Instance.Register<LevelGenerator>(levelGenerator);
         }
         
         private void Start()
