@@ -110,9 +110,9 @@ namespace CLJ.Runtime
             _currentStickman.gameObject.layer = LayerMask.NameToLayer("Default");
 
             sequence.Insert(0,_currentStickman.transform.DOScale(0.65f, 1f).SetEase(Ease.Linear));
-            sequence.Insert(0,_currentStickman.transform.DOMove(doorPosition, 0.5f).SetEase(Ease.Linear));
+            sequence.Insert(0,_currentStickman.transform.DOMove(doorPosition, 0.3f).SetEase(Ease.OutSine));
             sequence.InsertCallback(1, PlayCloseDoorAnimation);
-            sequence.Insert(1,_currentStickman.transform.DOMove(GetSeatPosition(), 0.5f).SetEase(Ease.Linear));
+            sequence.Insert(1,_currentStickman.transform.DOMove(GetSeatPosition(), 0.3f).SetEase(Ease.Linear));
             sequence.OnComplete(()=>
             {
                 _isReadyToGo = true;
