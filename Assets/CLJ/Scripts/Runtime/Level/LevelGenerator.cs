@@ -84,30 +84,6 @@ namespace CLJ.Runtime.Level
             }
         }
 
-        private List<Vector2Int> GetNeighborCoordinates(List<Vector2Int> linkedCells, CellDirection cellDirection)
-        {
-            var neighbours = new List<Vector2Int>();
-            var directions = cellDirection switch
-            {
-                CellDirection.Up or CellDirection.Down => new[] { Vector2Int.left, Vector2Int.right },
-                CellDirection.Left or CellDirection.Right => new[] { Vector2Int.up, Vector2Int.down },
-                _ => throw new ArgumentOutOfRangeException(nameof(cellDirection), cellDirection, null)
-            };
-            foreach (Vector2Int cell in linkedCells)
-            {
-                foreach (Vector2Int direction in directions)
-                {
-                    Vector2Int neighbourCoord = cell + direction;
-                    if (IsWithinGrid(neighbourCoord) && !linkedCells.Contains(neighbourCoord))
-                    {
-                        neighbours.Add(neighbourCoord);
-                    }
-                }
-            }
-
-            return neighbours;
-        }
-
         private bool IsWithinGrid(Vector2Int coordinate)
         {
             return coordinate.x >= 0 && coordinate.x < _levelGrid.width && coordinate.y >= 0 &&
@@ -122,7 +98,7 @@ namespace CLJ.Runtime.Level
                 for (int x = 0; x < _levelGrid.width; x++)
                 {
                     GridCell cell = _levelGrid.cells[x, y];
-                    if (cell == null || cell.gridObject == null || cell.isSpawned) continue;
+                    if (cell == null || cell.gridObject == null || cell.isSpawned || cell.isLinkCell) continue;
 
                     cell.linkedCellCoordinates.Add(new Vector2Int(x, y));
                     Vector3 middlePosition = GetCenterOfCells(cell.linkedCellCoordinates);
@@ -146,9 +122,36 @@ namespace CLJ.Runtime.Level
             }
             else if (obj.TryGetComponent(out Car car))
             {
-                List<Vector2Int> neighborCoordinates = GetNeighborCoordinates(cell.linkedCellCoordinates, cell.cellDirection);
+                List<Vector2Int> neighborCoordinates = GetNeighborCoordinates(cellPosition, cell.cellDirection, cell.gridObject.gridSpace);
                 car.Init(cell.cellColor, _roadPath, cellPosition, cell.cellDirection, neighborCoordinates);
             }
+        }
+        
+        private List<Vector2Int> GetNeighborCoordinates(Vector2Int cellCoordinate, CellDirection cellDirection, int gridSpace)
+        {
+            var neighbours = new List<Vector2Int>();
+            var directions = cellDirection switch
+            {
+                CellDirection.Up or CellDirection.Down => new[] { Vector2Int.left , Vector2Int.right } ,
+                CellDirection.Left or CellDirection.Right => new[] { Vector2Int.up, Vector2Int.down},
+                _ => throw new ArgumentOutOfRangeException(nameof(cellDirection), cellDirection, null)
+            };
+            
+            var lastCell = cellDirection == CellDirection.Up ? cellCoordinate - new Vector2Int(0,gridSpace - 1) : 
+                cellDirection == CellDirection.Down ? cellCoordinate + new Vector2Int(0,gridSpace - 1) :
+                cellDirection == CellDirection.Left ? cellCoordinate - new Vector2Int(gridSpace - 1,0) :
+                cellCoordinate + new Vector2Int(gridSpace - 1,0);
+            
+            foreach (Vector2Int direction in directions)
+            {
+                Vector2Int neighbourCoordinate = lastCell + direction;
+                if (IsWithinGrid(neighbourCoordinate))
+                {
+                    neighbours.Add(neighbourCoordinate);
+                }
+            }
+            
+            return neighbours;
         }
 
         private async UniTask SpawnRoads()

@@ -126,7 +126,8 @@ namespace CLJ.Runtime.Level
 
                 linkedCellCoordinates.Add(new Vector2Int(newX, newY));
                 var cell = GetCell(newX, newY);
-                cell.SetCell(_objectToPlace, selectedCellDirection, selectedCellColor);
+                var isOriginCell = newX == x && newY == y;
+                cell.SetCell(_objectToPlace, selectedCellDirection, selectedCellColor, !isOriginCell);
             }
 
             foreach (var coord in linkedCellCoordinates)

@@ -33,6 +33,7 @@ namespace CLJ.Runtime.Level
         public CellDirection cellDirection;
         public CellColor cellColor;
         public bool isSpawned;
+        public bool isLinkCell;
 
         public GridCell()
         {
@@ -40,12 +41,13 @@ namespace CLJ.Runtime.Level
             linkedCellCoordinates = null;
         }
 
-        public void SetCell(GridObject obj, CellDirection direction, CellColor color)
+        public void SetCell(GridObject obj, CellDirection direction, CellColor color, bool linkCell = false)
         {
             gridObject = obj;
             cellDirection = direction;
             cellColor = color;
             gridObject = obj;
+            isLinkCell = linkCell;
         }
 
         public void ResetCell()
