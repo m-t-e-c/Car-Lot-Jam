@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6454102269892881675}
-  - component: {fileID: 6454102269892881674}
   - component: {fileID: 6454102269892881677}
   - component: {fileID: 821432971560254100}
+  - component: {fileID: 2866544517194060831}
   m_Layer: 6
   m_Name: Stickman
   m_TagString: Untagged
@@ -37,20 +37,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &6454102269892881674
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6454102269892881672}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 0.20661378
-  m_Height: 1.0238764
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.4880246, z: 0}
 --- !u!114 &6454102269892881677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,6 +78,19 @@ MonoBehaviour:
   - {fileID: 2100000, guid: beb67f98041f66b4fb6abe38ec30aafc, type: 2}
   - {fileID: 2100000, guid: 67239989e9851f346b41cf27f03eee02, type: 2}
   - {fileID: 2100000, guid: 6dbda1b7224a7a845a4d48681f78b767, type: 2}
+--- !u!65 &2866544517194060831
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6454102269892881672}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.72242, y: 1, z: 0.75741446}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1001 &6454102270720550010
 PrefabInstance:
   m_ObjectHideFlags: 0

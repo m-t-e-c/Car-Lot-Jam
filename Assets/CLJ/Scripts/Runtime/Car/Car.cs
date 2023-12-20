@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using CLJ.Runtime.AStar;
 using CLJ.Runtime.Level;
 using UnityEngine;
@@ -21,11 +22,14 @@ namespace CLJ.Runtime
         [SerializeField] private Transform seatTransform;
         [SerializeField] private Transform carBody;
 
-        [Header("Other References")] 
-        [SerializeField] private GridObjectColorSetter gridObjectColorSetter;
+        [Header("Other References")] [SerializeField]
+        private GridObjectColorSetter gridObjectColorSetter;
+
+        [SerializeField] private LayerMask moveBlockLayers;
+        [SerializeField] private GameObject trailSmokeParticles;
         [SerializeField] private GameObject smokeParticles;
         [SerializeField] private Outline outline;
-        [SerializeField] private LayerMask moveBlockLayers;
+        [SerializeField] private float outlineWidth;
         [SerializeField] private float moveSpeed;
 
         private CellColor _cellColor;
@@ -33,6 +37,8 @@ namespace CLJ.Runtime
         private CellDirection _direction;
         private List<Vector2Int> _aroundCells;
         private Pathfinder _pathfinder;
+        private Stickman _currentStickman;
+        private Sequence _carShakeSequence;
 
         private bool _isReadyToGo;
         private bool _isMoving;
@@ -53,17 +59,100 @@ namespace CLJ.Runtime
             gridObjectColorSetter.SetColor(_cellColor);
         }
 
-        public CellDirection GetDirection()
+        public void SetStickman(Stickman stickman)
+        {
+            _currentStickman = stickman;
+            var enterCoordinates = GetEnterCells();
+            var sortedCoordinates = SortCoordinatesByDistance(_currentStickman.GetGridPosition(), enterCoordinates);
+
+            foreach (var coordinate in sortedCoordinates)
+            {
+                if (_currentStickman.MoveTo(coordinate, OnStickmanReachedCar))
+                {
+                    _currentStickman.PlayHappyEmoji();
+                    Highlight(true);
+                    break;
+                }
+
+                Highlight(false);
+                _currentStickman.PlayAngerEmoji();
+
+            }
+        }
+
+        private IEnumerable<Vector2Int> SortCoordinatesByDistance(Vector2Int characterPosition,
+            List<Vector2Int> coordinates)
+        {
+            var sortedCoordinates = coordinates.OrderBy(point =>
+                GetManhattanDistance(new Vector2Int(characterPosition.x, characterPosition.y),
+                    new Vector2Int(point.x, point.y)));
+            return sortedCoordinates;
+        }
+
+
+        private int GetManhattanDistance(Vector2Int positionA, Vector2Int positionB)
+        {
+            int distX = Mathf.Abs(positionA.x - positionB.x);
+            int distY = Mathf.Abs(positionA.y - positionB.y);
+            return distX + distY;
+        }
+
+        private void OnStickmanReachedCar()
+        {
+            Sequence sequence = DOTween.Sequence();
+            bool isLeft = IsStickmanLeftFromCar();
+            PlayOpenDoorAnimation(isLeft);
+            _currentStickman.PlayEnterCarAnimation();
+            Vector3 doorPosition = GetDoorPosition(isLeft);
+            doorPosition.y = 0;
+
+            var stickmanTransform = _currentStickman.transform;
+            var carTransform = transform;
+            stickmanTransform.parent = carTransform;
+            stickmanTransform.rotation = carTransform.rotation;
+            _currentStickman.gameObject.layer = LayerMask.NameToLayer("Default");
+
+            sequence.Insert(0,_currentStickman.transform.DOScale(0.65f, 1.5f).SetEase(Ease.Linear));
+            sequence.Insert(0,_currentStickman.transform.DOMove(doorPosition, 0.5f).SetEase(Ease.Linear));
+            sequence.Insert(1,_currentStickman.transform.DOMove(GetSeatPosition(), 0.7f).SetEase(Ease.Linear));
+            sequence.AppendCallback(PlayCloseDoorAnimation);
+            sequence.OnComplete(()=>
+            {
+                _isReadyToGo = true;
+                _carShakeSequence = DOTween.Sequence();
+                _carShakeSequence.Append(carBody.transform.DOShakeRotation(0.15f, 1, 1, 0));
+                _carShakeSequence.SetLoops(-1, LoopType.Yoyo);
+                smokeParticles.SetActive(true);
+            });
+        }
+
+        private bool IsStickmanLeftFromCar()
+        {
+            Vector3 stickmanPosition = _currentStickman.transform.position;
+            Vector3 carPosition = transform.position;
+            CellDirection carDirection = GetDirection();
+
+            return carDirection switch
+            {
+                CellDirection.Right => stickmanPosition.z > carPosition.z,
+                CellDirection.Left => stickmanPosition.z < carPosition.z,
+                CellDirection.Up => stickmanPosition.x < carPosition.x,
+                CellDirection.Down => stickmanPosition.x > carPosition.x,
+                _ => false,
+            };
+        }
+
+        private CellDirection GetDirection()
         {
             return _direction;
         }
 
-        public Vector3 GetSeatPosition()
+        private Vector3 GetSeatPosition()
         {
             return seatTransform.position;
         }
 
-        public List<Vector2Int> GetEnterCells()
+        private List<Vector2Int> GetEnterCells()
         {
             return _aroundCells;
         }
@@ -73,29 +162,31 @@ namespace CLJ.Runtime
             return _cellColor;
         }
 
-        public Vector3 GetDoorPosition(bool isLeft)
+        private Vector3 GetDoorPosition(bool isLeft)
         {
             return isLeft ? leftDoorEnterTransform.position : rightDoorEnterTransform.position;
         }
 
         public void Highlight(bool highlightStatus)
         {
-            outline.enabled = highlightStatus;
+            Color32 color = highlightStatus ? new Color32(0, 255, 0, 255) : new Color32(255, 0, 0, 255);
+            outline.OutlineColor = color;
+            float alpha = 0;
+            DOTween.To(() => alpha, x => alpha = x, outlineWidth, 0.7f)
+                .SetLoops(2, LoopType.Yoyo)
+                .OnUpdate(() =>
+                {
+                    outline.OutlineWidth = alpha;
+                });
         }
 
-        public void SetReady()
-        {
-            Highlight(false);
-            _isReadyToGo = true;
-        }
-
-        public void PlayOpenDoorAnimation(bool isLeft)
+        private void PlayOpenDoorAnimation(bool isLeft)
         {
             animator.SetInteger(DoorIndexHash, isLeft ? -1 : 1);
             animator.SetBool(OpenDoorHash, true);
         }
 
-        public void PlayCloseDoorAnimation()
+        private void PlayCloseDoorAnimation()
         {
             animator.SetBool(OpenDoorHash, false);
         }
@@ -103,7 +194,10 @@ namespace CLJ.Runtime
         private void FixedUpdate()
         {
             if (_isMoving || !_isReadyToGo)
+            {
+                _carShakeSequence?.Kill();
                 return;
+            }
 
             CheckAndExitRoad();
         }
@@ -128,7 +222,7 @@ namespace CLJ.Runtime
         private void ExitToRoad(bool forward)
         {
             _isMoving = true;
-            smokeParticles.SetActive(true);
+            trailSmokeParticles.SetActive(true);
 
             var (exitKey, exitTarget) = GetExitGridPosition(forward);
             PlayAccelerateAnimation(forward);

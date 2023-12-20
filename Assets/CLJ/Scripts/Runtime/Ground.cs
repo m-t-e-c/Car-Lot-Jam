@@ -1,4 +1,5 @@
-﻿using CLJ.Runtime.AStar;
+﻿using System;
+using CLJ.Runtime.AStar;
 using DG.Tweening;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace CLJ.Runtime
         private Color _startColor;
 
         private Sequence _highlightSequence;
+        public bool isOccupied;
 
         private void Start()
         {
@@ -25,8 +27,8 @@ namespace CLJ.Runtime
         private void FixedUpdate()
         {
             if (_node == null) return;
-            _node.IsOccupied =
-                Physics.CheckBox(transform.position, Vector3.one * 0.5f, Quaternion.identity, occupyLayer);
+            isOccupied = Physics.CheckBox(transform.position, Vector3.one * 0.5f, Quaternion.identity, occupyLayer);
+            _node.IsOccupied = isOccupied;
         }
 
         public void SetNode(Node node)
@@ -56,6 +58,12 @@ namespace CLJ.Runtime
         public Vector2Int GetCoordinates()
         {
             return _node.Coordinate;
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireCube(transform.position, Vector3.one * 0.5f);
         }
     }
 }
