@@ -117,7 +117,8 @@ namespace CLJ.Runtime
                 transform.position = Vector3.Lerp(startPosition, endPosition, fractionOfJourney);
                 yield return null;
             }
-
+            
+            transform.rotation = Quaternion.LookRotation(endPosition - startPosition);
             IsMoving = false;
         }
     }
