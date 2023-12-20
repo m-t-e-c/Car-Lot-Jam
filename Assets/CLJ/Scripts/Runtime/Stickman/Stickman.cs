@@ -72,6 +72,12 @@ namespace CLJ.Runtime
         
         public bool MoveTo(Vector2Int targetPosition, Action onMoveComplete = null, Action<Vector2Int> onPathFailed = null)
         {
+            if (_gridPosition.Equals(targetPosition))
+            {
+                onMoveComplete?.Invoke();
+                return true;
+            }
+            
             List<Vector2Int> path = _pathfinder.FindPath(_gridPosition, targetPosition, onPathFailed);
             if (path == null || path.Count == 0)
             {

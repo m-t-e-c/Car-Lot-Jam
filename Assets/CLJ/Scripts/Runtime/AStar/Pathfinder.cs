@@ -77,8 +77,7 @@ namespace CLJ.Runtime.AStar
                 Node currentNode = openList[0];
                 for (int i = 1; i < openList.Count; i++)
                 {
-                    if (openList[i].FCost < currentNode.FCost || openList[i].FCost == currentNode.FCost &&
-                        openList[i].HCost < currentNode.HCost)
+                    if (openList[i].FCost < currentNode.FCost || (openList[i].FCost == currentNode.FCost && openList[i].HCost < currentNode.HCost))
                     {
                         currentNode = openList[i];
                     }
@@ -112,7 +111,9 @@ namespace CLJ.Runtime.AStar
                 }
             }
 
-            onPathFailed?.Invoke(closedSet.LastOrDefault()!.Coordinate);
+            Node closestNodeToTarget = closedSet.OrderBy(n => GetDistance(n, targetNode)).FirstOrDefault();
+            Vector2Int closestCoordinate = closestNodeToTarget?.Coordinate ?? startCoordinate;
+            onPathFailed?.Invoke(closestCoordinate);
             return new List<Vector2Int>();
         }
 

@@ -59,7 +59,7 @@ namespace CLJ.Runtime
             gridObjectColorSetter.SetColor(_cellColor);
         }
 
-        public void SetStickman(Stickman stickman)
+        public void SetStickman(Stickman stickman, Action<Vector2Int> onPathFailed = null)
         {
             _currentStickman = stickman;
             var enterCoordinates = GetEnterCells();
@@ -67,7 +67,7 @@ namespace CLJ.Runtime
 
             foreach (var coordinate in sortedCoordinates)
             {
-                if (_currentStickman.MoveTo(coordinate, OnStickmanReachedCar))
+                if (_currentStickman.MoveTo(coordinate, OnStickmanReachedCar, onPathFailed))
                 {
                     _currentStickman.PlayHappyEmoji();
                     Highlight(true);
@@ -80,12 +80,9 @@ namespace CLJ.Runtime
             }
         }
 
-        private IEnumerable<Vector2Int> SortCoordinatesByDistance(Vector2Int characterPosition,
-            List<Vector2Int> coordinates)
+        private IEnumerable<Vector2Int> SortCoordinatesByDistance(Vector2Int characterPosition, List<Vector2Int> coordinates)
         {
-            var sortedCoordinates = coordinates.OrderBy(point =>
-                GetManhattanDistance(new Vector2Int(characterPosition.x, characterPosition.y),
-                    new Vector2Int(point.x, point.y)));
+            var sortedCoordinates = coordinates.OrderBy(point => GetManhattanDistance(new Vector2Int(characterPosition.x, characterPosition.y), new Vector2Int(point.x, point.y)));
             return sortedCoordinates;
         }
 
@@ -112,10 +109,10 @@ namespace CLJ.Runtime
             stickmanTransform.rotation = carTransform.rotation;
             _currentStickman.gameObject.layer = LayerMask.NameToLayer("Default");
 
-            sequence.Insert(0,_currentStickman.transform.DOScale(0.65f, 1.5f).SetEase(Ease.Linear));
+            sequence.Insert(0,_currentStickman.transform.DOScale(0.65f, 1f).SetEase(Ease.Linear));
             sequence.Insert(0,_currentStickman.transform.DOMove(doorPosition, 0.5f).SetEase(Ease.Linear));
-            sequence.Insert(1,_currentStickman.transform.DOMove(GetSeatPosition(), 0.7f).SetEase(Ease.Linear));
-            sequence.AppendCallback(PlayCloseDoorAnimation);
+            sequence.InsertCallback(1, PlayCloseDoorAnimation);
+            sequence.Insert(1,_currentStickman.transform.DOMove(GetSeatPosition(), 0.5f).SetEase(Ease.Linear));
             sequence.OnComplete(()=>
             {
                 _isReadyToGo = true;
