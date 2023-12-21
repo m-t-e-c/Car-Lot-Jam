@@ -93,7 +93,7 @@ namespace CLJ.Runtime.AStar
 
                 foreach (Node neighbour in GetNeighbours(currentNode))
                 {
-                    if (neighbour.IsOccupied || closedSet.Contains(neighbour))
+                    if (neighbour.IsOccupied || neighbour.IsReserved || closedSet.Contains(neighbour))
                     {
                         continue;
                     }

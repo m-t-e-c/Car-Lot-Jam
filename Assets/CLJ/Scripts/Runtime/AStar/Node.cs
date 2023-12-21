@@ -10,6 +10,7 @@ namespace CLJ.Runtime.AStar
         public int HCost;
         public int FCost => GCost + HCost;
         public bool IsOccupied;
+        public bool IsReserved;
         public Node Parent;
 
         public Node(Vector2Int coordinate,Vector2Int position, bool isOccupied = false)

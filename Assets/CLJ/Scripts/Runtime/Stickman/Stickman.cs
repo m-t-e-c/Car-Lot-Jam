@@ -108,6 +108,7 @@ namespace CLJ.Runtime
 
         private IEnumerator MoveToPoint(Vector2Int point)
         {
+            gameObject.layer = LayerMask.NameToLayer("Default");
             Vector3 startPosition = transform.position;
             Vector3 endPosition = new Vector3(point.x, 0, point.y);
             float journeyLength = Vector3.Distance(startPosition, endPosition);
@@ -126,6 +127,7 @@ namespace CLJ.Runtime
             
             transform.rotation = Quaternion.LookRotation(endPosition - startPosition);
             IsMoving = false;
+            gameObject.layer = LayerMask.NameToLayer("Stickman");
         }
     }
 }

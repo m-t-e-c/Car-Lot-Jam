@@ -550,8 +550,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OverrideLevel: 1
-  OverrideLevelIndex: 10
+  OverrideLevelIndex: 3
   cameraHolder: {fileID: 1360898244}
+  levelGenerator: {fileID: 1721443311}
 --- !u!4 &1074731233
 Transform:
   m_ObjectHideFlags: 0

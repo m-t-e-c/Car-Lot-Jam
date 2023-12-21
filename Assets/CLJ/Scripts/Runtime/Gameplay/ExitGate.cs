@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 namespace CLJ.Runtime
@@ -7,6 +8,7 @@ namespace CLJ.Runtime
     {
         [SerializeField] private ParticleSystem confettiVFX;
         [SerializeField] private GameObject barrier;
+        private readonly List<Car> _carsInTrigger = new();
         private Sequence _raiseSequence;
         private float _elapsedTime;
 
@@ -28,6 +30,8 @@ namespace CLJ.Runtime
         {
             if (other.TryGetComponent(out Car car))
             {
+                if (_carsInTrigger.Contains(car)) return;
+                _carsInTrigger.Add(car);
                 RaiseBarrier();
                 GameEvents.onCarPassedThroughTheGate?.Invoke();
             }            

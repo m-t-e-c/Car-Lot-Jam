@@ -1,5 +1,4 @@
-﻿using System;
-using CLJ.Runtime.AStar;
+﻿using CLJ.Runtime.AStar;
 using DG.Tweening;
 using UnityEngine;
 
@@ -16,6 +15,7 @@ namespace CLJ.Runtime
 
         private Sequence _highlightSequence;
         public bool isOccupied;
+        public bool isReserved => _node.IsReserved;
 
         private void Start()
         {
@@ -34,6 +34,11 @@ namespace CLJ.Runtime
         public void SetNode(Node node)
         {
             _node = node;
+        }
+        
+        public void SetReserved(bool isReserved)
+        {
+            _node.IsReserved = isReserved;
         }
 
         public void Highlight(bool canMovable)

@@ -9,10 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1143067089713968979}
-  - component: {fileID: 72241136540463687}
   - component: {fileID: -5004129265290038145}
   - component: {fileID: -5857948543703195382}
   - component: {fileID: 6480371045684189900}
+  - component: {fileID: 9087640077429413020}
+  - component: {fileID: 4823217938855662548}
   m_Layer: 7
   m_Name: SmallCar
   m_TagString: Untagged
@@ -38,19 +39,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &72241136540463687
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2170425480154115224}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.75, y: 0.7, z: 0.92824626}
-  m_Center: {x: 0, y: 0.35, z: -0.1}
 --- !u!114 &-5004129265290038145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2428,6 +2416,32 @@ MonoBehaviour:
     - {x: -0.97725666, y: 0.042273846, z: -0.2078035}
     - {x: -0.9772535, y: -0.11705612, z: -0.17684327}
     - {x: -0.9772541, y: -0.04046984, z: -0.20817459}
+--- !u!65 &9087640077429413020
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2170425480154115224}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.88655674, y: 0.44486448, z: 1.8761535}
+  m_Center: {x: -0.0018153787, y: 0.21931277, z: 0.007404804}
+--- !u!65 &4823217938855662548
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2170425480154115224}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.61913484, y: 0.2940868, z: 0.72476125}
+  m_Center: {x: -0.0018153787, y: 0.6046113, z: -0.119385466}
 --- !u!1 &3184502825052051614
 GameObject:
   m_ObjectHideFlags: 0

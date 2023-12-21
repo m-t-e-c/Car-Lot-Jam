@@ -51,7 +51,7 @@ namespace CLJ.Runtime
             {
                 HandleGroundClick(ground);
             }
-            else if (hitInfo.collider.TryGetComponent(out Car car))
+            else if (hitInfo.transform.TryGetComponent(out Car car))
             {
                 HandleCarClick(car);
             }
@@ -74,21 +74,27 @@ namespace CLJ.Runtime
         {
             if (ReferenceEquals(_currentStickman, null)) return;
 
-            if (ground.isOccupied)
+            if (ground.isOccupied || ground.isReserved)
             {
                 return;
             }
             
             Vector2Int groundCoord = ground.GetCoordinates();
-            bool hasPath = _currentStickman.MoveTo(groundCoord, null);
-
-            if (!hasPath)
+            bool hasPath = _currentStickman.MoveTo(groundCoord, () =>
+            {
+                ground.SetReserved(false);
+            });
+            
+            if (hasPath)
+            {
+                ground.SetReserved(true);
+            }
+            else
             {
                 _currentStickman.PlayAngerEmoji();
             }
             
             ground.Highlight(hasPath);
-            
             ResetStickman();
         }
 
