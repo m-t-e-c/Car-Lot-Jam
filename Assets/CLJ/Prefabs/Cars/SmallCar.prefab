@@ -2427,8 +2427,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.88655674, y: 0.44486448, z: 1.8761535}
-  m_Center: {x: -0.0018153787, y: 0.21931277, z: 0.007404804}
+  m_Size: {x: 0.88655674, y: 0.44486448, z: 1.9900194}
+  m_Center: {x: -0.0018153787, y: 0.21931277, z: -0.001777947}
 --- !u!65 &4823217938855662548
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2440,8 +2440,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.61913484, y: 0.2940868, z: 0.72476125}
-  m_Center: {x: -0.0018153787, y: 0.6046113, z: -0.119385466}
+  m_Size: {x: 0.61913484, y: 0.2940868, z: 0.8386272}
+  m_Center: {x: -0.0018153787, y: 0.6046113, z: -0.062452495}
 --- !u!1 &3184502825052051614
 GameObject:
   m_ObjectHideFlags: 0
@@ -2607,7 +2607,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 57e12d09026e31f4e807953410daf785, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.3
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 57e12d09026e31f4e807953410daf785, type: 3}
       propertyPath: m_LocalRotation.w
