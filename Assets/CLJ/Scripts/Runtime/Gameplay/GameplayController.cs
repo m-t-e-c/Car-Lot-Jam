@@ -80,7 +80,7 @@ namespace CLJ.Runtime
             }
             
             Vector2Int groundCoord = ground.GetCoordinates();
-            bool hasPath = _currentStickman.MoveTo(groundCoord, null, OnPathFailed);
+            bool hasPath = _currentStickman.MoveTo(groundCoord, null);
 
             if (!hasPath)
             {
@@ -110,7 +110,7 @@ namespace CLJ.Runtime
                 return;
             }
             
-            car.SetStickman(_currentStickman);
+            car.SetStickman(_currentStickman, OnPathFailed);
             ResetStickman();
         }
 

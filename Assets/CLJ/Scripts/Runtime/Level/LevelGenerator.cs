@@ -4,6 +4,7 @@ using System.Linq;
 using CLJ.Runtime.AStar;
 using CLJ.Runtime.Managers.LevelManager;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -27,8 +28,8 @@ namespace CLJ.Runtime.Level
 
         private async void OnLoadLevel(LevelGrid levelGrid)
         {
+            DOTween.ClearCachedTweens();
             _levelGrid = levelGrid;
-
             InitializeCamera();
             InitializePath();
             await SpawnGround();

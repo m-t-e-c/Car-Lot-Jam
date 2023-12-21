@@ -39,6 +39,7 @@ namespace CLJ.Runtime
         private Pathfinder _pathfinder;
         private Stickman _currentStickman;
         private Sequence _carShakeSequence;
+        private Sequence _carEnterSequence;
 
         private bool _isReadyToGo;
         private bool _isMoving;
@@ -65,9 +66,10 @@ namespace CLJ.Runtime
             var enterCoordinates = GetEnterCells();
             var sortedCoordinates = SortCoordinatesByDistance(_currentStickman.GetGridPosition(), enterCoordinates);
 
+            int unreachablePathCount = 0;
             foreach (var coordinate in sortedCoordinates)
             {
-                if (_currentStickman.MoveTo(coordinate, OnStickmanReachedCar, onPathFailed))
+                if (_currentStickman.MoveTo(coordinate, OnStickmanReachedCar))
                 {
                     _currentStickman.PlayHappyEmoji();
                     Highlight(true);
@@ -77,15 +79,19 @@ namespace CLJ.Runtime
                 Highlight(false);
                 _currentStickman.PlayAngerEmoji();
 
+                unreachablePathCount++;
+                if (unreachablePathCount.Equals(sortedCoordinates.Count))
+                {
+                    onPathFailed?.Invoke(sortedCoordinates[0]);
+                }
             }
         }
 
-        private IEnumerable<Vector2Int> SortCoordinatesByDistance(Vector2Int characterPosition, List<Vector2Int> coordinates)
+        private List<Vector2Int> SortCoordinatesByDistance(Vector2Int characterPosition, List<Vector2Int> coordinates)
         {
             var sortedCoordinates = coordinates.OrderBy(point => GetManhattanDistance(new Vector2Int(characterPosition.x, characterPosition.y), new Vector2Int(point.x, point.y)));
-            return sortedCoordinates;
+            return sortedCoordinates.ToList();
         }
-
 
         private int GetManhattanDistance(Vector2Int positionA, Vector2Int positionB)
         {
@@ -96,7 +102,8 @@ namespace CLJ.Runtime
 
         private void OnStickmanReachedCar()
         {
-            Sequence sequence = DOTween.Sequence();
+            _carEnterSequence?.Kill();
+            _carEnterSequence = DOTween.Sequence();
             bool isLeft = IsStickmanLeftFromCar();
             PlayOpenDoorAnimation(isLeft);
             _currentStickman.PlayEnterCarAnimation();
@@ -109,11 +116,11 @@ namespace CLJ.Runtime
             stickmanTransform.rotation = carTransform.rotation;
             _currentStickman.gameObject.layer = LayerMask.NameToLayer("Default");
 
-            sequence.Insert(0,_currentStickman.transform.DOScale(0.65f, 1f).SetEase(Ease.Linear));
-            sequence.Insert(0,_currentStickman.transform.DOMove(doorPosition, 0.3f).SetEase(Ease.OutSine));
-            sequence.InsertCallback(1, PlayCloseDoorAnimation);
-            sequence.Insert(1,_currentStickman.transform.DOMove(GetSeatPosition(), 0.3f).SetEase(Ease.Linear));
-            sequence.OnComplete(()=>
+            _carEnterSequence.Insert(0,_currentStickman.transform.DOScale(0.65f, 1f).SetEase(Ease.Linear));
+            _carEnterSequence.Insert(0,_currentStickman.transform.DOMove(doorPosition, 0.3f).SetEase(Ease.OutSine));
+            _carEnterSequence.InsertCallback(1, PlayCloseDoorAnimation);
+            _carEnterSequence.Insert(1,_currentStickman.transform.DOMove(GetSeatPosition(), 0.3f).SetEase(Ease.Linear));
+            _carEnterSequence.OnComplete(()=>
             {
                 _isReadyToGo = true;
                 _carShakeSequence = DOTween.Sequence();
