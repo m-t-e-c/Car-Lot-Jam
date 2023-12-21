@@ -22,9 +22,8 @@ namespace CLJ.Runtime
         [SerializeField] private Transform seatTransform;
         [SerializeField] private Transform carBody;
 
-        [Header("Other References")] [SerializeField]
-        private GridObjectColorSetter gridObjectColorSetter;
-
+        [Header("Other References")] 
+        [SerializeField] private GridObjectColorSetter gridObjectColorSetter;
         [SerializeField] private LayerMask moveBlockLayers;
         [SerializeField] private GameObject trailSmokeParticles;
         [SerializeField] private GameObject smokeParticles;
@@ -209,9 +208,8 @@ namespace CLJ.Runtime
         private void CheckAndExitRoad()
         {
             var myTransform = transform;
-            Ray ray = new Ray(myTransform.position + Vector3.up * 0.5f, myTransform.forward);
-            bool isBlockedFront = Physics.Raycast(ray.origin, ray.direction, 10, moveBlockLayers);
-            bool isBlockedBack = Physics.Raycast(ray.origin, -ray.direction, 10, moveBlockLayers);
+            bool isBlockedFront = Physics.Raycast(myTransform.position + Vector3.up * 0.2f, myTransform.forward, 10, moveBlockLayers);
+            bool isBlockedBack = Physics.Raycast(myTransform.position + Vector3.up * 0.2f, -myTransform.forward, 10, moveBlockLayers);
 
             if (isBlockedFront && !isBlockedBack)
             {
