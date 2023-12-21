@@ -225,6 +225,7 @@ namespace CLJ.Runtime
 
         private void ExitToRoad(bool forward)
         {
+            gameObject.layer = LayerMask.NameToLayer("Default");
             _isMoving = true;
             trailSmokeParticles.SetActive(true);
 
