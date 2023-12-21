@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using CLJ.Runtime.AStar;
 using CLJ.Runtime.Managers.LevelManager;
 using Cysharp.Threading.Tasks;
@@ -28,7 +27,6 @@ namespace CLJ.Runtime.Level
 
         private async void OnLoadLevel(LevelGrid levelGrid)
         {
-            DOTween.ClearCachedTweens();
             _levelGrid = levelGrid;
             InitializeCamera();
             InitializePath();
@@ -245,6 +243,7 @@ namespace CLJ.Runtime.Level
         private void OnDisable()
         {
             _levelManager.OnLevelLoad -= OnLoadLevel;
+            DOTween.KillAll();
         }
         
         public Ground GetGroundByCoordinate(Vector2Int coordinate)
